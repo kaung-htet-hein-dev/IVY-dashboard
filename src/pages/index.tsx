@@ -1,7 +1,12 @@
-export default function Home() {
-  return (
-    <div>
-      <h1>Hello World</h1>
-    </div>
-  );
+import { useEffect } from "react";
+import { useRouter } from "next/router";
+
+export default function HomePage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    router.replace("/branches");
+  }, [router]);
+
+  return null;
 }

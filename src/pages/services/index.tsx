@@ -1,91 +1,10 @@
-import { Box, Button, Typography } from "@mui/material";
-import { Add as AddIcon } from "@mui/icons-material";
-import FormModal from "@/components/common/FormModal";
-import ConfirmDialog from "@/components/common/ConfirmDialog";
-import ServiceList from "./ServiceList";
-import ServiceForm from "./ServiceForm";
-import { useServices } from "./useServices";
+import { PageContainer } from "@/components/common/PageContainer";
+import { Typography } from "@mui/material";
 
 export default function ServicesPage() {
-  const {
-    form,
-    services,
-    categories,
-    selectedService,
-    isLoading,
-    isCreateModalOpen,
-    isEditModalOpen,
-    isDeleteDialogOpen,
-    createMutation,
-    updateMutation,
-    deleteMutation,
-    handleCreateModalOpen,
-    handleCreateModalClose,
-    handleEditModalOpen,
-    handleEditModalClose,
-    handleDeleteDialogOpen,
-    handleDeleteDialogClose,
-    onCreateSubmit,
-    onEditSubmit,
-    onDeleteConfirm
-  } = useServices();
-
   return (
-    <Box>
-      <Box
-        sx={{
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          mb: 3
-        }}
-      >
-        <Typography variant="h4">Services</Typography>
-        <Button
-          variant="contained"
-          startIcon={<AddIcon />}
-          onClick={handleCreateModalOpen}
-        >
-          Add Service
-        </Button>
-      </Box>
-
-      <ServiceList
-        services={services}
-        categories={categories}
-        isLoading={isLoading}
-        onEdit={handleEditModalOpen}
-        onDelete={handleDeleteDialogOpen}
-      />
-
-      <FormModal
-        open={isCreateModalOpen}
-        onClose={handleCreateModalClose}
-        title="Create Service"
-        onSubmit={form.handleSubmit(onCreateSubmit)}
-        isSubmitting={createMutation.isPending}
-      >
-        <ServiceForm form={form} categories={categories} />
-      </FormModal>
-
-      <FormModal
-        open={isEditModalOpen}
-        onClose={handleEditModalClose}
-        title="Edit Service"
-        onSubmit={form.handleSubmit(onEditSubmit)}
-        isSubmitting={updateMutation.isPending}
-      >
-        <ServiceForm form={form} categories={categories} />
-      </FormModal>
-
-      <ConfirmDialog
-        open={isDeleteDialogOpen}
-        onClose={handleDeleteDialogClose}
-        onConfirm={onDeleteConfirm}
-        title="Delete Service"
-        message={`Are you sure you want to delete ${selectedService?.name}?`}
-        isLoading={deleteMutation.isPending}
-      />
-    </Box>
+    <PageContainer title="Services">
+      <Typography>Services management will be implemented here</Typography>
+    </PageContainer>
   );
 }
