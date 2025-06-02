@@ -1,10 +1,62 @@
 import { PageContainer } from "@/components/common/PageContainer";
-import { Typography } from "@mui/material";
+import { DataTable } from "@/components/common/DataTable";
+import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
+import { Add } from "@mui/icons-material";
+import { Box, Button } from "@mui/material";
+import { CategoryForm } from "./components/CategoryForm";
+import { useCategories } from "./hooks/useCategories";
 
 export default function CategoriesPage() {
+  const {
+    categories,
+    isLoading,
+    columns,
+    handleCreate,
+    formState,
+    handleCloseForm,
+    handleSubmit,
+    deleteState,
+    handleCancelDelete,
+    handleConfirmDelete
+  } = useCategories();
+
   return (
     <PageContainer title="Categories">
-      <Typography>Categories management will be implemented here</Typography>
+      <Box sx={{ mb: 2 }}>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={handleCreate}
+          disabled={formState.isLoading || deleteState.isLoading}
+        >
+          Create Category
+        </Button>
+      </Box>
+
+      <DataTable
+        data={categories}
+        columns={columns}
+        isLoading={isLoading}
+        pageSize={10}
+      />
+
+      <CategoryForm
+        open={formState.mode !== null}
+        onClose={handleCloseForm}
+        onSubmit={handleSubmit}
+        initialData={formState.category}
+        mode={formState.mode || "create"}
+        isLoading={formState.isLoading}
+      />
+
+      <ConfirmationDialog
+        open={deleteState.isOpen}
+        title="Delete Category"
+        message={`Are you sure you want to delete ${deleteState.category?.name}? This action cannot be undone.`}
+        onConfirm={handleConfirmDelete}
+        onCancel={handleCancelDelete}
+        isLoading={deleteState.isLoading}
+      />
     </PageContainer>
   );
 }

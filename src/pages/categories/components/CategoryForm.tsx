@@ -1,4 +1,4 @@
-import { Branch } from "@/types/branch";
+import { Category } from "@/types/category";
 import { Close } from "@mui/icons-material";
 import {
   Button,
@@ -9,28 +9,28 @@ import {
   IconButton,
   CircularProgress
 } from "@mui/material";
-import { BranchFormData, FormMode } from "../types";
-import { useBranchForm } from "../hooks/useBranchForm";
-import { BranchFormFields } from "./BranchFormFields";
+import { CategoryFormData, FormMode } from "../types";
+import { useCategoryForm } from "../hooks/useCategoryForm";
+import { CategoryFormFields } from "./CategoryFormFields";
 
-interface BranchFormProps {
+interface CategoryFormProps {
   open: boolean;
   onClose: () => void;
-  onSubmit: (data: BranchFormData) => Promise<void>;
-  initialData?: Branch;
+  onSubmit: (data: CategoryFormData) => Promise<void>;
+  initialData?: Category;
   mode: FormMode;
   isLoading?: boolean;
 }
 
-export const BranchForm = ({
+export const CategoryForm = ({
   open,
   onClose,
   onSubmit,
   initialData,
   mode,
   isLoading = false
-}: BranchFormProps) => {
-  const { register, handleSubmit, errors, reset } = useBranchForm({
+}: CategoryFormProps) => {
+  const { register, handleSubmit, errors, reset } = useCategoryForm({
     initialData,
     open
   });
@@ -40,7 +40,7 @@ export const BranchForm = ({
     onClose();
   };
 
-  const onFormSubmit = async (data: BranchFormData) => {
+  const onFormSubmit = async (data: CategoryFormData) => {
     try {
       await onSubmit(data);
       handleClose();
@@ -66,7 +66,7 @@ export const BranchForm = ({
           justifyContent: "space-between"
         }}
       >
-        {mode === "create" ? "Create Branch" : "Edit Branch"}
+        {mode === "create" ? "Create Category" : "Edit Category"}
         <IconButton
           aria-label="close"
           onClick={handleClose}
@@ -78,7 +78,7 @@ export const BranchForm = ({
       </DialogTitle>
       <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogContent dividers>
-          <BranchFormFields
+          <CategoryFormFields
             register={register}
             errors={errors}
             disabled={isLoading}

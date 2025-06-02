@@ -23,16 +23,23 @@ export default function BranchesPage() {
   return (
     <PageContainer title="Branches">
       <Box sx={{ mb: 2 }}>
-        <Button variant="contained" startIcon={<Add />} onClick={handleCreate}>
+        <Button
+          variant="contained"
+          startIcon={<Add />}
+          onClick={handleCreate}
+          disabled={formState.isLoading || deleteState.isLoading}
+        >
           Create Branch
         </Button>
       </Box>
+
       <DataTable
         data={branches}
         columns={columns}
         isLoading={isLoading}
         pageSize={10}
       />
+
       <BranchForm
         open={formState.mode !== null}
         onClose={handleCloseForm}
@@ -41,6 +48,7 @@ export default function BranchesPage() {
         mode={formState.mode || "create"}
         isLoading={formState.isLoading}
       />
+
       <ConfirmationDialog
         open={deleteState.isOpen}
         title="Delete Branch"
