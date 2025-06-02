@@ -1,4 +1,4 @@
-import { Box, Paper, Typography } from "@mui/material";
+import { Box, Typography } from "@mui/material";
 import { ReactNode } from "react";
 
 interface PageContainerProps {
@@ -12,7 +12,7 @@ export const PageContainer = ({ title, children }: PageContainerProps) => {
       <Typography variant="h4" gutterBottom>
         {title}
       </Typography>
-      <Paper sx={{ p: 2 }}>{children}</Paper>
+      {children}
     </Box>
   );
 };
