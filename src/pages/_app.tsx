@@ -25,12 +25,12 @@ export default function App({ Component, pageProps }: AppProps) {
   const isPublicRoute = ["/login", "/register"].includes(router.pathname);
 
   useEffect(() => {
-    if (isAuthenticated) {
-      router.push("/dashboard");
-    } else {
-      router.push("/login");
+    if (isAuthenticated && isPublicRoute) {
+      router.replace("/dashboard");
+    } else if (!isAuthenticated && !isPublicRoute) {
+      router.replace("/login");
     }
-  }, [isAuthenticated]);
+  }, [isAuthenticated, router.pathname]);
 
   return (
     <QueryClientProvider client={queryClient}>

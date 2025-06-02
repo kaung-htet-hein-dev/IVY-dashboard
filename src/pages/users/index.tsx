@@ -2,16 +2,15 @@ import { Box, Button, Typography } from "@mui/material";
 import { Add as AddIcon } from "@mui/icons-material";
 import FormModal from "@/components/common/FormModal";
 import ConfirmDialog from "@/components/common/ConfirmDialog";
-import ServiceList from "./ServiceList";
-import ServiceForm from "./ServiceForm";
-import { useServices } from "./useServices";
+import UserList from "./UserList";
+import UserForm from "./UserForm";
+import { useUsers } from "./useUsers";
 
-export default function ServicesPage() {
+export default function UsersPage() {
   const {
     form,
-    services,
-    categories,
-    selectedService,
+    users,
+    selectedUser,
     isLoading,
     isCreateModalOpen,
     isEditModalOpen,
@@ -28,7 +27,7 @@ export default function ServicesPage() {
     onCreateSubmit,
     onEditSubmit,
     onDeleteConfirm
-  } = useServices();
+  } = useUsers();
 
   return (
     <Box>
@@ -40,19 +39,18 @@ export default function ServicesPage() {
           mb: 3
         }}
       >
-        <Typography variant="h4">Services</Typography>
+        <Typography variant="h4">Users</Typography>
         <Button
           variant="contained"
           startIcon={<AddIcon />}
           onClick={handleCreateModalOpen}
         >
-          Add Service
+          Add User
         </Button>
       </Box>
 
-      <ServiceList
-        services={services}
-        categories={categories}
+      <UserList
+        users={users}
         isLoading={isLoading}
         onEdit={handleEditModalOpen}
         onDelete={handleDeleteDialogOpen}
@@ -61,29 +59,29 @@ export default function ServicesPage() {
       <FormModal
         open={isCreateModalOpen}
         onClose={handleCreateModalClose}
-        title="Create Service"
+        title="Create User"
         onSubmit={form.handleSubmit(onCreateSubmit)}
         isSubmitting={createMutation.isPending}
       >
-        <ServiceForm form={form} categories={categories} />
+        <UserForm form={form} />
       </FormModal>
 
       <FormModal
         open={isEditModalOpen}
         onClose={handleEditModalClose}
-        title="Edit Service"
+        title="Edit User"
         onSubmit={form.handleSubmit(onEditSubmit)}
         isSubmitting={updateMutation.isPending}
       >
-        <ServiceForm form={form} categories={categories} />
+        <UserForm form={form} />
       </FormModal>
 
       <ConfirmDialog
         open={isDeleteDialogOpen}
         onClose={handleDeleteDialogClose}
         onConfirm={onDeleteConfirm}
-        title="Delete Service"
-        message={`Are you sure you want to delete ${selectedService?.name}?`}
+        title="Delete User"
+        message={`Are you sure you want to delete ${selectedUser?.name}?`}
         isLoading={deleteMutation.isPending}
       />
     </Box>
