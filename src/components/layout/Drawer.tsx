@@ -1,28 +1,27 @@
-import { useState } from "react";
 import {
-  Drawer as MuiDrawer,
+  BookOnline,
+  Business,
+  Category,
+  ChevronLeft,
+  ChevronRight,
+  MiscellaneousServices,
+  People
+} from "@mui/icons-material";
+import {
+  Box,
+  CSSObject,
+  IconButton,
   List,
   ListItem,
   ListItemButton,
   ListItemIcon,
   ListItemText,
-  IconButton,
+  Drawer as MuiDrawer,
   styled,
   Theme,
-  CSSObject,
-  useTheme,
   useMediaQuery,
-  Box
+  useTheme
 } from "@mui/material";
-import {
-  ChevronLeft,
-  ChevronRight,
-  Business,
-  People,
-  Category,
-  BookOnline,
-  MiscellaneousServices
-} from "@mui/icons-material";
 import { useRouter } from "next/router";
 
 const drawerWidth = 240;
@@ -74,8 +73,8 @@ const StyledPermanentDrawer = styled(MuiDrawer, {
 }));
 
 const menuItems = [
-  { text: "Branches", icon: <Business />, path: "/branches" },
   { text: "Users", icon: <People />, path: "/users" },
+  { text: "Branches", icon: <Business />, path: "/branches" },
   { text: "Categories", icon: <Category />, path: "/categories" },
   { text: "Bookings", icon: <BookOnline />, path: "/bookings" },
   { text: "Services", icon: <MiscellaneousServices />, path: "/services" }

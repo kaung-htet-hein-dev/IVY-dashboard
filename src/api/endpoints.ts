@@ -9,5 +9,9 @@ export const endpoints = {
 
   // Categories
   categories: "/api/v1/category",
-  category: (id: string) => `/api/v1/category/${id}`
+  category: (id: string) => `/api/v1/category/${id}`,
+
+  // Users
+  users: "/api/v1/user",
+  user: (id: string) => `/api/v1/user/${id}`
 };

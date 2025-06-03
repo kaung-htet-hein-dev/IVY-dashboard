@@ -1,10 +1,18 @@
 import { PageContainer } from "@/components/common/PageContainer";
-import { Typography } from "@mui/material";
+import { DataTable } from "@/components/common/DataTable";
+import { useUsers } from "./hooks/useUsers";
 
 export default function UsersPage() {
+  const { users, isLoading, columns } = useUsers();
+
   return (
     <PageContainer title="Users">
-      <Typography>Users management will be implemented here</Typography>
+      <DataTable
+        data={users}
+        columns={columns}
+        isLoading={isLoading}
+        pageSize={10}
+      />
     </PageContainer>
   );
 }
