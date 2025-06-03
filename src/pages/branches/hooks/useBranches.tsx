@@ -1,7 +1,7 @@
 import { branchService } from "@/services/branchService";
 import { Branch } from "@/types/branch";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { BranchActions } from "../components/BranchActions";
@@ -11,30 +11,76 @@ type FormMode = "create" | "edit" | null;
 interface FormState {
   mode: FormMode;
   branch?: Branch;
-  isLoading: boolean;
 }
 
 interface DeleteState {
   isOpen: boolean;
   branch?: Branch;
-  isLoading: boolean;
 }
+
+type BranchFormData = Omit<Branch, "id">;
 
 export const useBranches = () => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const [formState, setFormState] = useState<FormState>({
-    mode: null,
-    isLoading: false
+    mode: null
   });
   const [deleteState, setDeleteState] = useState<DeleteState>({
-    isOpen: false,
-    isLoading: false
+    isOpen: false
   });
 
   const { data: branches = [], isLoading: isTableLoading } = useQuery({
     queryKey: ["branches"],
     queryFn: branchService.getBranches
+  });
+
+  const { mutate: createBranch, isPending: isCreating } = useMutation<
+    Branch,
+    Error,
+    BranchFormData
+  >({
+    mutationFn: branchService.createBranch,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["branches"] });
+      enqueueSnackbar("Branch created successfully", { variant: "success" });
+      handleCloseForm();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to create branch", { variant: "error" });
+    }
+  });
+
+  const { mutate: updateBranch, isPending: isUpdating } = useMutation<
+    Branch,
+    Error,
+    { id: string; data: BranchFormData }
+  >({
+    mutationFn: ({ id, data }) => branchService.updateBranch(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["branches"] });
+      enqueueSnackbar("Branch updated successfully", { variant: "success" });
+      handleCloseForm();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to update branch", { variant: "error" });
+    }
+  });
+
+  const { mutate: deleteBranch, isPending: isDeleting } = useMutation<
+    void,
+    Error,
+    string
+  >({
+    mutationFn: branchService.deleteBranch,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["branches"] });
+      enqueueSnackbar("Branch deleted successfully", { variant: "success" });
+      handleCancelDelete();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to delete branch", { variant: "error" });
+    }
   });
 
   const handleView = (branch: Branch) => {
@@ -43,65 +89,38 @@ export const useBranches = () => {
   };
 
   const handleEdit = (branch: Branch) => {
-    setFormState({ mode: "edit", branch, isLoading: false });
+    setFormState({ mode: "edit", branch });
   };
 
   const handleCreate = () => {
-    setFormState({ mode: "create", isLoading: false });
+    setFormState({ mode: "create" });
   };
 
   const handleCloseForm = () => {
-    setFormState({ mode: null, isLoading: false });
+    setFormState({ mode: null });
   };
 
   const handleDeleteClick = (branch: Branch) => {
-    setDeleteState({ isOpen: true, branch, isLoading: false });
+    setDeleteState({ isOpen: true, branch });
   };
 
   const handleCancelDelete = () => {
-    setDeleteState({ isOpen: false, isLoading: false });
+    setDeleteState({ isOpen: false });
   };
 
   const handleConfirmDelete = async () => {
     if (!deleteState.branch) return;
-
-    setDeleteState((prev) => ({ ...prev, isLoading: true }));
-    try {
-      await branchService.deleteBranch(deleteState.branch.id);
-      await queryClient.invalidateQueries({ queryKey: ["branches"] });
-      enqueueSnackbar("Branch deleted successfully", { variant: "success" });
-      setDeleteState({ isOpen: false, isLoading: false });
-    } catch (error) {
-      enqueueSnackbar("Failed to delete branch", { variant: "error" });
-      setDeleteState((prev) => ({ ...prev, isLoading: false }));
-    }
+    await deleteBranch(deleteState.branch.id);
   };
 
-  const handleSubmit = async (data: Omit<Branch, "id">) => {
-    setFormState((prev) => ({ ...prev, isLoading: true }));
-    try {
-      if (formState.mode === "create") {
-        await branchService.createBranch(data);
-        enqueueSnackbar("Branch created successfully", { variant: "success" });
-      } else if (formState.mode === "edit" && formState.branch) {
-        await branchService.updateBranch(formState.branch.id, {
-          name: data.name,
-          location: data.location,
-          longitude: data.longitude,
-          latitude: data.latitude,
-          phone_number: data.phone_number
-        });
-        enqueueSnackbar("Branch updated successfully", { variant: "success" });
-      }
-      await queryClient.invalidateQueries({ queryKey: ["branches"] });
-      setFormState({ mode: null, isLoading: false });
-    } catch (error) {
-      enqueueSnackbar(
-        `Failed to ${formState.mode === "create" ? "create" : "update"} branch`,
-        { variant: "error" }
-      );
-      setFormState((prev) => ({ ...prev, isLoading: false }));
-      throw error;
+  const handleSubmit = async (data: BranchFormData) => {
+    if (formState.mode === "create") {
+      await createBranch(data);
+    } else if (formState.mode === "edit" && formState.branch) {
+      await updateBranch({
+        id: formState.branch.id,
+        data
+      });
     }
   };
 
@@ -145,10 +164,16 @@ export const useBranches = () => {
     isLoading: isTableLoading,
     columns,
     handleCreate,
-    formState,
+    formState: {
+      ...formState,
+      isLoading: isCreating || isUpdating
+    },
     handleCloseForm,
     handleSubmit,
-    deleteState,
+    deleteState: {
+      ...deleteState,
+      isLoading: isDeleting
+    },
     handleCancelDelete,
     handleConfirmDelete
   };

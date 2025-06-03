@@ -108,7 +108,7 @@ export const useUsers = () => {
 
     setFormState((prev) => ({ ...prev, isLoading: true }));
     try {
-      await updateMutation.mutateAsync({
+      await updateMutation.mutate({
         id: formState.user.id,
         ...data
       });
@@ -130,7 +130,7 @@ export const useUsers = () => {
 
     setDeleteState((prev) => ({ ...prev, isLoading: true }));
     try {
-      await deleteMutation.mutateAsync(deleteState.user.id);
+      await deleteMutation.mutate(deleteState.user.id);
     } catch (error) {
       // Error will be handled by mutation's onError
     }

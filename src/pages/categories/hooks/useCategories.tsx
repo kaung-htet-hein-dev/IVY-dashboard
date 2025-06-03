@@ -1,27 +1,89 @@
 import { categoryService } from "@/services/categoryService";
 import { Category } from "@/types/category";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
+import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { CategoryActions } from "../components/CategoryActions";
-import { CategoryFormData, DeleteState, FormState } from "../types";
+import { CategoryFormData } from "../types";
+
+interface FormState {
+  mode: "create" | "edit" | null;
+  category?: Category;
+}
+
+interface DeleteState {
+  isOpen: boolean;
+  category?: Category;
+}
+
+interface CategoryResponse {
+  code: number;
+  data: Category;
+  message: string;
+}
 
 export const useCategories = () => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const [formState, setFormState] = useState<FormState>({
-    mode: null,
-    isLoading: false
+    mode: null
   });
   const [deleteState, setDeleteState] = useState<DeleteState>({
-    isOpen: false,
-    isLoading: false
+    isOpen: false
   });
 
   const { data: categories = [], isLoading: isTableLoading } = useQuery({
     queryKey: ["categories"],
     queryFn: categoryService.getCategories
+  });
+
+  const { mutate: createCategory, isPending: isCreating } = useMutation<
+    Category,
+    Error,
+    CategoryFormData
+  >({
+    mutationFn: categoryService.createCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      enqueueSnackbar("Category created successfully", { variant: "success" });
+      handleCloseForm();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to create category", { variant: "error" });
+    }
+  });
+
+  const { mutate: updateCategory, isPending: isUpdating } = useMutation<
+    Category,
+    Error,
+    { id: string; data: CategoryFormData }
+  >({
+    mutationFn: ({ id, data }) => categoryService.updateCategory(id, data),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      enqueueSnackbar("Category updated successfully", { variant: "success" });
+      handleCloseForm();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to update category", { variant: "error" });
+    }
+  });
+
+  const { mutate: deleteCategory, isPending: isDeleting } = useMutation<
+    void,
+    Error,
+    string
+  >({
+    mutationFn: categoryService.deleteCategory,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["categories"] });
+      enqueueSnackbar("Category deleted successfully", { variant: "success" });
+      handleCancelDelete();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to delete category", { variant: "error" });
+    }
   });
 
   const handleView = (category: Category) => {
@@ -30,67 +92,38 @@ export const useCategories = () => {
   };
 
   const handleEdit = (category: Category) => {
-    setFormState({ mode: "edit", category, isLoading: false });
+    setFormState({ mode: "edit", category });
   };
 
   const handleCreate = () => {
-    setFormState({ mode: "create", isLoading: false });
+    setFormState({ mode: "create" });
   };
 
   const handleCloseForm = () => {
-    setFormState({ mode: null, isLoading: false });
+    setFormState({ mode: null });
   };
 
   const handleDeleteClick = (category: Category) => {
-    setDeleteState({ isOpen: true, category, isLoading: false });
+    setDeleteState({ isOpen: true, category });
   };
 
   const handleCancelDelete = () => {
-    setDeleteState({ isOpen: false, isLoading: false });
+    setDeleteState({ isOpen: false });
   };
 
   const handleConfirmDelete = async () => {
     if (!deleteState.category) return;
-
-    setDeleteState((prev) => ({ ...prev, isLoading: true }));
-    try {
-      await categoryService.deleteCategory(deleteState.category.id);
-      await queryClient.invalidateQueries({ queryKey: ["categories"] });
-      enqueueSnackbar("Category deleted successfully", { variant: "success" });
-      setDeleteState({ isOpen: false, isLoading: false });
-    } catch (error) {
-      enqueueSnackbar("Failed to delete category", { variant: "error" });
-      setDeleteState((prev) => ({ ...prev, isLoading: false }));
-    }
+    await deleteCategory(deleteState.category.id);
   };
 
   const handleSubmit = async (data: CategoryFormData) => {
-    setFormState((prev) => ({ ...prev, isLoading: true }));
-    try {
-      if (formState.mode === "create") {
-        await categoryService.createCategory(data);
-        enqueueSnackbar("Category created successfully", {
-          variant: "success"
-        });
-      } else if (formState.mode === "edit" && formState.category) {
-        await categoryService.updateCategory(formState.category.id, {
-          name: data.name
-        });
-        enqueueSnackbar("Category updated successfully", {
-          variant: "success"
-        });
-      }
-      await queryClient.invalidateQueries({ queryKey: ["categories"] });
-      setFormState({ mode: null, isLoading: false });
-    } catch (error) {
-      enqueueSnackbar(
-        `Failed to ${
-          formState.mode === "create" ? "create" : "update"
-        } category`,
-        { variant: "error" }
-      );
-      setFormState((prev) => ({ ...prev, isLoading: false }));
-      throw error;
+    if (formState.mode === "create") {
+      await createCategory(data);
+    } else if (formState.mode === "edit" && formState.category) {
+      await updateCategory({
+        id: formState.category.id,
+        data
+      });
     }
   };
 
@@ -130,10 +163,16 @@ export const useCategories = () => {
     isLoading: isTableLoading,
     columns,
     handleCreate,
-    formState,
+    formState: {
+      ...formState,
+      isLoading: isCreating || isUpdating
+    },
     handleCloseForm,
     handleSubmit,
-    deleteState,
+    deleteState: {
+      ...deleteState,
+      isLoading: isDeleting
+    },
     handleCancelDelete,
     handleConfirmDelete
   };
