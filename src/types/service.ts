@@ -12,6 +12,7 @@ export interface Service {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  branch_ids: string[];
 }
 
 export interface ServicesResponse {
@@ -30,4 +31,5 @@ export interface ServiceFormData {
   category_id: string;
   image: string;
   is_active: boolean;
+  branch_ids: string[];
 }

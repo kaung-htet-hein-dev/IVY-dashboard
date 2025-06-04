@@ -1,4 +1,5 @@
-import { Service, ServiceFormData, FormMode } from "@/types/service";
+import { Service, ServiceFormData } from "@/types/service";
+import { FormMode } from "../types";
 import { Close } from "@mui/icons-material";
 import {
   Button,
@@ -9,6 +10,10 @@ import {
   IconButton,
   CircularProgress
 } from "@mui/material";
+import { useForm } from "react-hook-form";
+import { zodResolver } from "@hookform/resolvers/zod";
+import { serviceSchema } from "../types";
+import { ServiceFormFields } from "./ServiceFormFields";
 
 interface ServiceFormProps {
   open: boolean;
@@ -27,8 +32,38 @@ export const ServiceForm = ({
   mode,
   isLoading = false
 }: ServiceFormProps) => {
+  const {
+    register,
+    handleSubmit,
+    formState: { errors },
+    control,
+    reset
+  } = useForm<ServiceFormData>({
+    resolver: zodResolver(serviceSchema),
+    defaultValues: {
+      name: initialData?.name || "",
+      description: initialData?.description || "",
+      duration_minute: initialData?.duration_minute || 30,
+      price: initialData?.price || 0,
+      is_active: initialData?.is_active ?? true,
+      image: initialData?.image || "",
+      category_id: initialData?.category_id || "",
+      branch_ids: initialData?.branch_ids || []
+    }
+  });
+
   const handleClose = () => {
+    reset();
     onClose();
+  };
+
+  const onFormSubmit = async (data: ServiceFormData) => {
+    try {
+      await onSubmit(data);
+      handleClose();
+    } catch (error) {
+      // Error handling is done in the parent component
+    }
   };
 
   return (
@@ -58,9 +93,14 @@ export const ServiceForm = ({
           <Close />
         </IconButton>
       </DialogTitle>
-      <form onSubmit={(e) => e.preventDefault()}>
+      <form onSubmit={handleSubmit(onFormSubmit)}>
         <DialogContent dividers>
-          {/* Form fields will be added later */}
+          <ServiceFormFields
+            register={register}
+            errors={errors}
+            control={control}
+            disabled={isLoading}
+          />
         </DialogContent>
         <DialogActions>
           <Button onClick={handleClose} disabled={isLoading}>

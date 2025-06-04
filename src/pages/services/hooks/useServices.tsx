@@ -2,56 +2,37 @@ import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { Service, ServiceFormData } from "@/types/service";
-import { formatDateTime } from "@/utils/format";
 import { useNotification } from "@/hooks/useNotification";
-import { TableActions } from "@/components/common/TableActions";
-import { axiosInstance } from "@/api/axios";
+import { serviceService } from "@/services/serviceService";
+import { ServiceActions } from "../components/ServiceActions";
 
 interface FormState {
   mode: "create" | "edit" | null;
-  service: Service | null;
+  service?: Service;
 }
 
 interface DeleteState {
   isOpen: boolean;
-  service: Service | null;
-}
-
-interface ServiceResponse {
-  code: number;
-  data: Service;
-  message: string;
+  service?: Service;
 }
 
 export const useServices = () => {
   const queryClient = useQueryClient();
   const { showNotification } = useNotification();
   const [formState, setFormState] = useState<FormState>({
-    mode: null,
-    service: null
+    mode: null
   });
   const [deleteState, setDeleteState] = useState<DeleteState>({
-    isOpen: false,
-    service: null
+    isOpen: false
   });
 
-  const { data: servicesData, isLoading: isLoadingServices } = useQuery({
+  const { data: services = [], isLoading: isTableLoading } = useQuery({
     queryKey: ["services"],
-    queryFn: async () => {
-      const response = await axiosInstance.get("/api/v1/service");
-      return response.data;
-    }
+    queryFn: serviceService.getServices
   });
 
-  const { mutate: createService, isPending: isCreating } = useMutation<
-    ServiceResponse,
-    Error,
-    ServiceFormData
-  >({
-    mutationFn: async (data) => {
-      const response = await axiosInstance.post("/api/v1/service", data);
-      return response.data;
-    },
+  const { mutate: createService, isPending: isCreating } = useMutation({
+    mutationFn: serviceService.createService,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
       showNotification("Service created successfully", "success");
@@ -65,15 +46,9 @@ export const useServices = () => {
     }
   });
 
-  const { mutate: updateService, isPending: isUpdating } = useMutation<
-    ServiceResponse,
-    Error,
-    { id: string; data: ServiceFormData }
-  >({
-    mutationFn: async ({ id, data }) => {
-      const response = await axiosInstance.put(`/api/v1/service/${id}`, data);
-      return response.data;
-    },
+  const { mutate: updateService, isPending: isUpdating } = useMutation({
+    mutationFn: ({ id, data }: { id: string; data: ServiceFormData }) =>
+      serviceService.updateService(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
       showNotification("Service updated successfully", "success");
@@ -87,15 +62,8 @@ export const useServices = () => {
     }
   });
 
-  const { mutate: deleteService, isPending: isDeleting } = useMutation<
-    ServiceResponse,
-    Error,
-    string
-  >({
-    mutationFn: async (id) => {
-      const response = await axiosInstance.delete(`/api/v1/service/${id}`);
-      return response.data;
-    },
+  const { mutate: deleteService, isPending: isDeleting } = useMutation({
+    mutationFn: serviceService.deleteService,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
       showNotification("Service deleted successfully", "success");
@@ -116,7 +84,11 @@ export const useServices = () => {
     },
     {
       accessorKey: "description",
-      header: "Description"
+      header: "Description",
+      cell: ({ getValue }) => {
+        const desc = getValue<string>();
+        return desc.length > 50 ? desc.slice(0, 50) + "..." : desc;
+      }
     },
     {
       accessorKey: "duration_minute",
@@ -138,36 +110,22 @@ export const useServices = () => {
       cell: ({ getValue }) => (getValue<boolean>() ? "Active" : "Inactive")
     },
     {
-      accessorKey: "created_at",
-      header: "Created At",
-      cell: ({ getValue }) => formatDateTime(getValue<string>())
-    },
-    {
       id: "actions",
       header: "Actions",
-      cell: ({ row }) => {
-        return (
-          <TableActions
-            onView={() => handleView(row.original)}
-            onEdit={() => handleEdit(row.original)}
-            onDelete={() => handleDelete(row.original)}
-          />
-        );
-      }
+      cell: ({ row }) => (
+        <ServiceActions
+          service={row.original}
+          onEdit={() => handleEdit(row.original)}
+          onDelete={() => handleDelete(row.original)}
+          onView={() => {}}
+        />
+      )
     }
   ];
 
   const handleCreate = () => {
     setFormState({
-      mode: "create",
-      service: null
-    });
-  };
-
-  const handleView = (service: Service) => {
-    setFormState({
-      mode: "edit",
-      service
+      mode: "create"
     });
   };
 
@@ -187,8 +145,7 @@ export const useServices = () => {
 
   const handleCloseForm = () => {
     setFormState({
-      mode: null,
-      service: null
+      mode: null
     });
   };
 
@@ -210,14 +167,13 @@ export const useServices = () => {
 
   const handleCancelDelete = () => {
     setDeleteState({
-      isOpen: false,
-      service: null
+      isOpen: false
     });
   };
 
   return {
-    services: servicesData?.data || [],
-    isLoading: isLoadingServices,
+    services,
+    isLoading: isTableLoading,
     columns,
     handleCreate,
     formState: {

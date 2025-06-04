@@ -13,5 +13,9 @@ export const endpoints = {
 
   // Users
   users: "/api/v1/user",
-  user: (id: string) => `/api/v1/user/${id}`
+  user: (id: string) => `/api/v1/user/${id}`,
+
+  // Services
+  services: "/api/v1/service",
+  service: (id: string) => `/api/v1/service/${id}`
 };
