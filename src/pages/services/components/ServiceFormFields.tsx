@@ -1,27 +1,27 @@
+import { branchService } from "@/services/branchService";
+import { categoryService } from "@/services/categoryService";
 import {
-  UseFormRegister,
-  FieldErrors,
-  Control,
-  useWatch
-} from "react-hook-form";
-import { ServiceFormData } from "../types";
-import {
-  TextField,
-  Stack,
-  FormControlLabel,
-  Switch,
-  FormControl,
-  InputLabel,
-  Select,
-  MenuItem,
-  FormHelperText,
   Checkbox,
+  FormControl,
+  FormControlLabel,
   FormGroup,
-  InputAdornment
+  FormHelperText,
+  InputAdornment,
+  InputLabel,
+  MenuItem,
+  Select,
+  Stack,
+  Switch,
+  TextField
 } from "@mui/material";
 import { useQuery } from "@tanstack/react-query";
-import { categoryService } from "@/services/categoryService";
-import { branchService } from "@/services/branchService";
+import {
+  Control,
+  Controller,
+  FieldErrors,
+  UseFormRegister
+} from "react-hook-form";
+import { ServiceFormData } from "../types";
 
 interface ServiceFormFieldsProps {
   register: UseFormRegister<ServiceFormData>;
@@ -36,22 +36,18 @@ export const ServiceFormFields = ({
   errors,
   disabled = false
 }: ServiceFormFieldsProps) => {
-  const { data: categories = [] } = useQuery({
+  const { data: categories = [], isFetching: categoryFetching } = useQuery({
     queryKey: ["categories"],
     queryFn: categoryService.getCategories
   });
 
-  const { data: branches = [] } = useQuery({
+  const { data: branches = [], isFetching: branchFetching } = useQuery({
     queryKey: ["branches"],
     queryFn: branchService.getBranches
   });
 
-  // Using useWatch to observe branch_ids for controlled component
-  const selectedBranches = useWatch({
-    control,
-    name: "branch_ids",
-    defaultValue: []
-  });
+  const isLoading = categoryFetching || branchFetching;
+  if (isLoading) return null;
 
   return (
     <Stack spacing={2}>
@@ -111,19 +107,29 @@ export const ServiceFormFields = ({
         disabled={disabled}
       />
 
-      <FormControl error={!!errors.category_id} disabled={disabled} fullWidth>
-        <InputLabel>Category</InputLabel>
-        <Select label="Category" {...register("category_id")}>
-          {categories.map((category) => (
-            <MenuItem key={category.id} value={category.id}>
-              {category.name}
-            </MenuItem>
-          ))}
-        </Select>
-        {errors.category_id && (
-          <FormHelperText>{errors.category_id.message}</FormHelperText>
+      <Controller
+        name="category_id"
+        control={control}
+        render={({ field }) => (
+          <FormControl
+            error={!!errors.category_id}
+            disabled={disabled}
+            fullWidth
+          >
+            <InputLabel>Category</InputLabel>
+            <Select label="Category" {...field}>
+              {categories.map((category) => (
+                <MenuItem key={category.id} value={category.id}>
+                  {category.name}
+                </MenuItem>
+              ))}
+            </Select>
+            {errors.category_id && (
+              <FormHelperText>{errors.category_id.message}</FormHelperText>
+            )}
+          </FormControl>
         )}
-      </FormControl>
+      />
 
       <InputLabel>Branches</InputLabel>
       <FormControl
@@ -132,28 +138,50 @@ export const ServiceFormFields = ({
         disabled={disabled}
       >
         <FormGroup>
-          {branches.map((branch) => (
-            <FormControlLabel
-              key={branch.id}
-              control={
-                <Checkbox
-                  checked={selectedBranches.includes(branch.id)}
-                  {...register("branch_ids")}
-                  value={branch.id}
-                />
-              }
-              label={branch.name}
-            />
-          ))}
+          <Controller
+            name="branch_ids"
+            control={control}
+            render={({ field }) => (
+              <>
+                {branches.map((branch) => (
+                  <FormControlLabel
+                    key={branch.id}
+                    control={
+                      <Checkbox
+                        checked={field.value?.includes(branch.id)}
+                        onChange={(e) => {
+                          const newValue = e.target.checked
+                            ? [...(field.value || []), branch.id]
+                            : (field.value || []).filter(
+                                (id) => id !== branch.id
+                              );
+                          field.onChange(newValue);
+                        }}
+                      />
+                    }
+                    label={branch.name}
+                  />
+                ))}
+              </>
+            )}
+          />
         </FormGroup>
         {errors.branch_ids && (
           <FormHelperText>{errors.branch_ids.message}</FormHelperText>
         )}
       </FormControl>
 
-      <FormControlLabel
-        control={<Switch {...register("is_active")} disabled={disabled} />}
-        label="Active"
+      <Controller
+        name="is_active"
+        control={control}
+        render={({ field: { value, ...field } }) => (
+          <FormControlLabel
+            control={
+              <Switch checked={Boolean(value)} {...field} disabled={disabled} />
+            }
+            label="Active"
+          />
+        )}
       />
     </Stack>
   );

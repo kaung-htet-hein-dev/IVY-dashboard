@@ -9,11 +9,13 @@ import { ServiceActions } from "../components/ServiceActions";
 interface FormState {
   mode: "create" | "edit" | null;
   service?: Service;
+  isLoading?: boolean;
 }
 
 interface DeleteState {
   isOpen: boolean;
   service?: Service;
+  isLoading?: boolean;
 }
 
 export const useServices = () => {
@@ -105,6 +107,14 @@ export const useServices = () => {
       header: "Category"
     },
     {
+      accessorKey: "branches",
+      header: "Branches",
+      cell: ({ getValue }) => {
+        const branches = getValue<Array<{ name: string }>>();
+        return branches?.map((branch) => branch.name).join(", ") || "-";
+      }
+    },
+    {
       accessorKey: "is_active",
       header: "Status",
       cell: ({ getValue }) => (getValue<boolean>() ? "Active" : "Inactive")
@@ -125,15 +135,32 @@ export const useServices = () => {
 
   const handleCreate = () => {
     setFormState({
-      mode: "create"
+      mode: "create",
+      isLoading: false
     });
   };
 
-  const handleEdit = (service: Service) => {
-    setFormState({
-      mode: "edit",
-      service
-    });
+  const handleEdit = async (service: Service) => {
+    try {
+      setFormState({
+        mode: "edit",
+        service, // Set initial service data
+        isLoading: true
+      });
+      // Get fresh service data before editing
+      const freshService = await serviceService.getService(service.id);
+      setFormState({
+        mode: "edit",
+        service: freshService,
+        isLoading: false
+      });
+    } catch (error) {
+      showNotification("Failed to fetch service details", "error");
+      setFormState({
+        mode: null,
+        isLoading: false
+      });
+    }
   };
 
   const handleDelete = (service: Service) => {
@@ -145,7 +172,8 @@ export const useServices = () => {
 
   const handleCloseForm = () => {
     setFormState({
-      mode: null
+      mode: null,
+      isLoading: false
     });
   };
 

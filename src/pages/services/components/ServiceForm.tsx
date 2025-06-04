@@ -14,6 +14,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { serviceSchema } from "../types";
 import { ServiceFormFields } from "./ServiceFormFields";
+import { useEffect } from "react";
 
 interface ServiceFormProps {
   open: boolean;
@@ -41,16 +42,47 @@ export const ServiceForm = ({
   } = useForm<ServiceFormData>({
     resolver: zodResolver(serviceSchema),
     defaultValues: {
-      name: initialData?.name || "",
-      description: initialData?.description || "",
-      duration_minute: initialData?.duration_minute || 30,
-      price: initialData?.price || 0,
-      is_active: initialData?.is_active ?? true,
-      image: initialData?.image || "",
-      category_id: initialData?.category_id || "",
-      branch_ids: initialData?.branch_ids || []
+      name: "",
+      description: "",
+      duration_minute: 30,
+      price: 0,
+      is_active: true,
+      image: "",
+      category_id: "",
+      branch_ids: []
     }
   });
+
+  useEffect(() => {
+    if (open) {
+      reset(
+        initialData
+          ? {
+              name: initialData.name,
+              description: initialData.description,
+              duration_minute: initialData.duration_minute,
+              price: initialData.price,
+              is_active: initialData.is_active,
+              image: initialData.image,
+              category_id: initialData.category_id,
+              branch_ids:
+                initialData.branch_ids ||
+                initialData.branches?.map((branch) => branch.id) ||
+                []
+            }
+          : {
+              name: "",
+              description: "",
+              duration_minute: 30,
+              price: 0,
+              is_active: true,
+              image: "",
+              category_id: "",
+              branch_ids: []
+            }
+      );
+    }
+  }, [open, initialData, reset]);
 
   const handleClose = () => {
     reset();

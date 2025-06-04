@@ -12,6 +12,14 @@ export interface Service {
   is_active: boolean;
   created_at: string;
   updated_at: string;
+  branches: Array<{
+    id: string;
+    name: string;
+    location: string;
+    longitude: string;
+    latitude: string;
+    phone_number: string;
+  }>;
   branch_ids: string[];
 }
 
