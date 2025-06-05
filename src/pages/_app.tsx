@@ -20,7 +20,13 @@ const theme = createTheme({
   }
 });
 
-const queryClient = new QueryClient();
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 1000 * 60 * 5 // 5 minutes
+    }
+  }
+});
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();

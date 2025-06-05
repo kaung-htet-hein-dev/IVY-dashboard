@@ -147,13 +147,6 @@ export const useServices = () => {
         service, // Set initial service data
         isLoading: true
       });
-      // Get fresh service data before editing
-      const freshService = await serviceService.getService(service.id);
-      setFormState({
-        mode: "edit",
-        service: freshService,
-        isLoading: false
-      });
     } catch (error) {
       showNotification("Failed to fetch service details", "error");
       setFormState({
