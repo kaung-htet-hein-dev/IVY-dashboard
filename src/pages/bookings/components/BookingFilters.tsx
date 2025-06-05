@@ -1,13 +1,5 @@
-import {
-  Box,
-  FormControl,
-  InputLabel,
-  MenuItem,
-  Select,
-  TextField
-} from "@mui/material";
+import { Box, FormControl, InputLabel, MenuItem, Select } from "@mui/material";
 import { DatePicker } from "@mui/x-date-pickers";
-import { format } from "date-fns";
 
 export interface BookingFilters {
   status: string;
@@ -52,7 +44,20 @@ export const BookingFilters = ({
         onChange={(date) => onFilterChange({ ...filters, bookedDate: date })}
         slotProps={{
           textField: {
-            sx: { minWidth: 200 }
+            sx: { minWidth: 200 },
+            InputProps: {
+              endAdornment: filters.bookedDate ? (
+                <Box
+                  component="span"
+                  sx={{ cursor: "pointer", mr: 2 }}
+                  onClick={() =>
+                    onFilterChange({ ...filters, bookedDate: null })
+                  }
+                >
+                  ✕
+                </Box>
+              ) : null
+            }
           }
         }}
       />
