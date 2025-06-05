@@ -17,5 +17,9 @@ export const endpoints = {
 
   // Services
   services: "/api/v1/service",
-  service: (id: string) => `/api/v1/service/${id}`
+  service: (id: string) => `/api/v1/service/${id}`,
+
+  // Bookings
+  bookings: "/api/v1/booking",
+  booking: (id: string) => `/api/v1/booking/${id}`
 };
