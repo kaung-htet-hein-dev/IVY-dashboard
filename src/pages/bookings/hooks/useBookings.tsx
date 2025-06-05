@@ -1,10 +1,12 @@
 import { bookingService } from "@/services/bookingService";
 import { Booking } from "@/types/booking";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useQuery } from "@tanstack/react-query";
+import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
 import { BookingActions } from "../components/BookingActions";
+import { BookingFormData, FormState } from "../types";
+import { enqueueSnackbar } from "notistack";
 
 export const useBookings = () => {
   const [filters, setFilters] = useState({
@@ -78,11 +80,49 @@ export const useBookings = () => {
     []
   );
 
+  const [formState, setFormState] = useState<FormState>({
+    mode: null,
+    isLoading: false
+  });
+
+  const queryClient = useQueryClient();
+
+  const { mutate: createBooking, isPending: isCreating } = useMutation({
+    mutationFn: bookingService.createBooking,
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      enqueueSnackbar("Booking created successfully", { variant: "success" });
+      handleCloseForm();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to create booking", { variant: "error" });
+    }
+  });
+
+  const handleCreate = () => {
+    setFormState({ mode: "create", isLoading: false });
+  };
+
+  const handleCloseForm = () => {
+    setFormState({ mode: null, isLoading: false });
+  };
+
+  const handleSubmit = async (data: BookingFormData) => {
+    await createBooking(data);
+  };
+
   return {
     bookings,
     isLoading: isTableLoading,
     columns,
     filters,
-    onFilterChange: setFilters
+    onFilterChange: setFilters,
+    formState: {
+      ...formState,
+      isLoading: isCreating
+    },
+    handleCreate,
+    handleCloseForm,
+    handleSubmit
   };
 };

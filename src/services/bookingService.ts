@@ -1,6 +1,9 @@
 import { Booking, BookingResponse } from "@/types/booking";
 import { endpoints } from "@/api/endpoints";
 import { axiosInstance } from "@/api/axios";
+import { BookingFormData } from "@/pages/bookings/types";
+import { format } from "date-fns";
+import { TimeSlot } from "@/pages/bookings/types";
 
 interface GetBookingsFilters {
   status?: string;
@@ -26,6 +29,28 @@ export const bookingService = {
   getBooking: async (id: string): Promise<Booking> => {
     const response = await axiosInstance.get<{ data: Booking }>(
       endpoints.booking(id)
+    );
+    return response.data.data;
+  },
+
+  getAvailableSlots: async (
+    date: string,
+    branchId: string
+  ): Promise<TimeSlot[]> => {
+    const response = await axiosInstance.get<{ data: TimeSlot[] }>(
+      `${endpoints.bookings}/slots?booked_date=${date}&branch_id=${branchId}`
+    );
+    return response.data.data;
+  },
+
+  createBooking: async (booking: BookingFormData): Promise<Booking> => {
+    const formattedBooking = {
+      ...booking,
+      booked_date: format(booking.booked_date, "dd/MM/yyyy")
+    };
+    const response = await axiosInstance.post<{ data: Booking }>(
+      endpoints.bookings,
+      formattedBooking
     );
     return response.data.data;
   }

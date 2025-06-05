@@ -6,10 +6,20 @@ import { Add } from "@mui/icons-material";
 import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { BookingFilters } from "./components/BookingFilters";
+import { BookingForm } from "./components/BookingForm";
 
 export default function BookingsPage() {
-  const { bookings, isLoading, columns, filters, onFilterChange } =
-    useBookings();
+  const {
+    bookings,
+    isLoading,
+    columns,
+    filters,
+    onFilterChange,
+    formState,
+    handleCreate,
+    handleCloseForm,
+    handleSubmit
+  } = useBookings();
 
   return (
     <PageContainer title="Bookings">
@@ -17,8 +27,8 @@ export default function BookingsPage() {
         <Button
           variant="contained"
           startIcon={<Add />}
-          onClick={() => {}}
-          disabled={false}
+          onClick={handleCreate}
+          disabled={formState.isLoading}
         >
           Create Booking
         </Button>
@@ -31,6 +41,12 @@ export default function BookingsPage() {
           columns={columns}
           isLoading={isLoading}
           pageSize={10}
+        />
+        <BookingForm
+          open={formState.mode === "create"}
+          onClose={handleCloseForm}
+          onSubmit={handleSubmit}
+          isLoading={formState.isLoading}
         />
       </LocalizationProvider>
     </PageContainer>
