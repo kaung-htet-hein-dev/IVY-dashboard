@@ -31,8 +31,7 @@ export const useLogin = () => {
       );
       return response.data;
     },
-    onSuccess: async (response) => {
-      setToken(response.data.token);
+    onSuccess: async () => {
       // Small delay to ensure cookie is set
       await new Promise((resolve) => setTimeout(resolve, 100));
       router.replace("/bookings");

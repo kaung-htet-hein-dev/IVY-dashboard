@@ -10,23 +10,27 @@ const protectedRoutes = [
   "/settings",
   "/branches",
   "/users",
-  "/categories"
+  "/categories",
+  "/services"
 ];
 
 export function middleware(request: NextRequest) {
   const { pathname } = request.nextUrl;
   const token = request.cookies.get("auth_token")?.value;
 
+  // Exact match for home page
+  if (pathname === "/" && !token) {
+    return NextResponse.redirect(new URL("/login", request.url));
+  }
+
   // If the user is trying to access a protected route without being authenticated
   if (protectedRoutes.some((route) => pathname.startsWith(route)) && !token) {
-    const url = new URL("/login", request.url);
-    url.searchParams.set("from", pathname);
-    return NextResponse.redirect(url);
+    return NextResponse.redirect(new URL("/login", request.url));
   }
 
   // If the user is authenticated and trying to access login page
   if (publicRoutes.includes(pathname) && token) {
-    return NextResponse.redirect(new URL("/bookings", request.url));
+    return NextResponse.redirect(new URL("/", request.url));
   }
 
   return NextResponse.next();

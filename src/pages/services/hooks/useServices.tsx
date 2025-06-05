@@ -5,6 +5,7 @@ import { Service, ServiceFormData } from "@/types/service";
 import { useNotification } from "@/hooks/useNotification";
 import { serviceService } from "@/services/serviceService";
 import { ServiceActions } from "../components/ServiceActions";
+import { format } from "date-fns";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -119,6 +120,17 @@ export const useServices = () => {
       header: "Status",
       cell: ({ getValue }) => (getValue<boolean>() ? "Active" : "Inactive")
     },
+    {
+      accessorKey: "created_at",
+      header: "Created At",
+      cell: ({ getValue }) => format(new Date(getValue<string>()), "PPpp")
+    },
+    {
+      accessorKey: "updated_at",
+      header: "Updated At",
+      cell: ({ getValue }) => format(new Date(getValue<string>()), "PPpp")
+    },
+
     {
       id: "actions",
       header: "Actions",

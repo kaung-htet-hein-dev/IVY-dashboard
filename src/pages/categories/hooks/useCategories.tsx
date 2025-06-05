@@ -6,6 +6,7 @@ import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { CategoryActions } from "../components/CategoryActions";
 import { CategoryFormData } from "../types";
+import { format } from "date-fns";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -136,11 +137,11 @@ export const useCategories = () => {
       }),
       columnHelper.accessor("created_at", {
         header: "Created At",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString()
+        cell: (props) => format(new Date(props.getValue()), "PPpp")
       }),
       columnHelper.accessor("updated_at", {
         header: "Updated At",
-        cell: (info) => new Date(info.getValue()).toLocaleDateString()
+        cell: (props) => format(new Date(props.getValue()), "PPpp")
       }),
       {
         id: "actions",

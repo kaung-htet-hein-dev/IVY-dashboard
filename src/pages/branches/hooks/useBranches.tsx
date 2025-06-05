@@ -5,6 +5,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { BranchActions } from "../components/BranchActions";
+import { format } from "date-fns";
 
 type FormMode = "create" | "edit" | null;
 
@@ -142,6 +143,14 @@ export const useBranches = () => {
       }),
       columnHelper.accessor("phone_number", {
         header: "Phone Number"
+      }),
+      columnHelper.accessor("created_at", {
+        header: "Created At",
+        cell: (props) => format(new Date(props.getValue()), "PPpp")
+      }),
+      columnHelper.accessor("updated_at", {
+        header: "Updated At",
+        cell: (props) => format(new Date(props.getValue()), "PPpp")
       }),
       {
         id: "actions",
