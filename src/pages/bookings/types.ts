@@ -1,4 +1,5 @@
 import { z } from "zod";
+import { Booking } from "@/types/booking";
 
 export const bookingFormSchema = z.object({
   service_id: z.string().min(1, "Service is required"),
@@ -13,7 +14,12 @@ export type FormMode = "create" | "edit" | null;
 
 export interface FormState {
   mode: FormMode;
+  booking?: Booking;
   isLoading: boolean;
+}
+
+export interface UpdateBookingData {
+  status: string;
 }
 
 export interface TimeSlot {

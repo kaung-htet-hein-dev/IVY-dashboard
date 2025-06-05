@@ -7,6 +7,7 @@ import { LocalizationProvider } from "@mui/x-date-pickers";
 import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 import { BookingFilters } from "./components/BookingFilters";
 import { BookingForm } from "./components/BookingForm";
+import { UpdateBookingForm } from "./components/UpdateBookingForm";
 
 export default function BookingsPage() {
   const {
@@ -42,10 +43,19 @@ export default function BookingsPage() {
           isLoading={isLoading}
           pageSize={10}
         />
+
         <BookingForm
           open={formState.mode === "create"}
           onClose={handleCloseForm}
           onSubmit={handleSubmit}
+          isLoading={formState.isLoading}
+        />
+
+        <UpdateBookingForm
+          open={formState.mode === "edit"}
+          onClose={handleCloseForm}
+          onSubmit={handleSubmit}
+          booking={formState.booking}
           isLoading={formState.isLoading}
         />
       </LocalizationProvider>

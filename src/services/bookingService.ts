@@ -53,5 +53,13 @@ export const bookingService = {
       formattedBooking
     );
     return response.data.data;
+  },
+
+  updateBookingStatus: async (id: string, status: string): Promise<Booking> => {
+    const response = await axiosInstance.put<{ data: Booking }>(
+      endpoints.booking(id),
+      { status }
+    );
+    return response.data.data;
   }
 };

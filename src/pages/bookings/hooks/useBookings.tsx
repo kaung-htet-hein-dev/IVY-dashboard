@@ -7,11 +7,16 @@ import { format } from "date-fns";
 import { BookingActions } from "../components/BookingActions";
 import { BookingFormData, FormState } from "../types";
 import { enqueueSnackbar } from "notistack";
+import { UpdateBookingFormData } from "../components/UpdateBookingForm";
 
 export const useBookings = () => {
   const [filters, setFilters] = useState({
     status: "",
     bookedDate: null as Date | null
+  });
+  const [formState, setFormState] = useState<FormState>({
+    mode: null,
+    isLoading: false
   });
 
   const { data: bookings = [], isLoading: isTableLoading } = useQuery({
@@ -30,7 +35,7 @@ export const useBookings = () => {
   };
 
   const handleEdit = (booking: Booking) => {
-    console.log("Edit booking:", booking);
+    setFormState({ mode: "edit", isLoading: false, booking });
   };
 
   const handleDelete = (booking: Booking) => {
@@ -80,11 +85,6 @@ export const useBookings = () => {
     []
   );
 
-  const [formState, setFormState] = useState<FormState>({
-    mode: null,
-    isLoading: false
-  });
-
   const queryClient = useQueryClient();
 
   const { mutate: createBooking, isPending: isCreating } = useMutation({
@@ -99,6 +99,39 @@ export const useBookings = () => {
     }
   });
 
+  const { mutate: updateStatus, isPending: isUpdating } = useMutation({
+    mutationFn: ({ id, status }: { id: string; status: string }) =>
+      bookingService.updateBookingStatus(id, status),
+    onSuccess: () => {
+      queryClient.invalidateQueries({ queryKey: ["bookings"] });
+      enqueueSnackbar("Booking status updated successfully", {
+        variant: "success"
+      });
+      handleCloseForm();
+    },
+    onError: () => {
+      enqueueSnackbar("Failed to update booking status", { variant: "error" });
+    }
+  });
+
+  const handleUpdateBooking = async (data: UpdateBookingFormData) => {
+    if (!formState.booking) return;
+
+    setFormState((prev) => ({ ...prev, isLoading: true }));
+
+    try {
+      await updateStatus({
+        id: formState.booking.id,
+        status: data.status
+      });
+    } catch (error) {
+      console.error("Error updating booking status:", error);
+    } finally {
+      setFormState((prev) => ({ ...prev, isLoading: false }));
+    }
+    handleCloseForm();
+  };
+
   const handleCreate = () => {
     setFormState({ mode: "create", isLoading: false });
   };
@@ -107,8 +140,14 @@ export const useBookings = () => {
     setFormState({ mode: null, isLoading: false });
   };
 
-  const handleSubmit = async (data: BookingFormData) => {
-    await createBooking(data);
+  const handleSubmit = async (
+    data: BookingFormData | UpdateBookingFormData
+  ) => {
+    if (formState.mode === "edit") {
+      await handleUpdateBooking(data as UpdateBookingFormData);
+    } else {
+      await createBooking(data as BookingFormData);
+    }
   };
 
   return {
@@ -123,6 +162,7 @@ export const useBookings = () => {
     },
     handleCreate,
     handleCloseForm,
-    handleSubmit
+    handleSubmit,
+    handleUpdateBooking
   };
 };
