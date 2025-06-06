@@ -7,6 +7,7 @@ import React, { useMemo, useState } from "react";
 import { CategoryActions } from "../components/CategoryActions";
 import { CategoryFormData } from "../types";
 import { format } from "date-fns";
+import { ErrorResponse } from "@/types/api";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -16,12 +17,6 @@ interface FormState {
 interface DeleteState {
   isOpen: boolean;
   category?: Category;
-}
-
-interface CategoryResponse {
-  code: number;
-  data: Category;
-  message: string;
 }
 
 export const useCategories = () => {
@@ -41,7 +36,7 @@ export const useCategories = () => {
 
   const { mutate: createCategory, isPending: isCreating } = useMutation<
     Category,
-    Error,
+    ErrorResponse,
     CategoryFormData
   >({
     mutationFn: categoryService.createCategory,
@@ -50,14 +45,17 @@ export const useCategories = () => {
       enqueueSnackbar("Category created successfully", { variant: "success" });
       handleCloseForm();
     },
-    onError: () => {
-      enqueueSnackbar("Failed to create category", { variant: "error" });
+    onError: (error) => {
+      enqueueSnackbar(
+        error.data?.data?.message ?? "Failed to create category",
+        { variant: "error" }
+      );
     }
   });
 
   const { mutate: updateCategory, isPending: isUpdating } = useMutation<
     Category,
-    Error,
+    ErrorResponse,
     { id: string; data: CategoryFormData }
   >({
     mutationFn: ({ id, data }) => categoryService.updateCategory(id, data),
@@ -66,14 +64,17 @@ export const useCategories = () => {
       enqueueSnackbar("Category updated successfully", { variant: "success" });
       handleCloseForm();
     },
-    onError: () => {
-      enqueueSnackbar("Failed to update category", { variant: "error" });
+    onError: (error) => {
+      enqueueSnackbar(
+        error.data?.data?.message ?? "Failed to update category",
+        { variant: "error" }
+      );
     }
   });
 
   const { mutate: deleteCategory, isPending: isDeleting } = useMutation<
     void,
-    Error,
+    ErrorResponse,
     string
   >({
     mutationFn: categoryService.deleteCategory,
@@ -82,8 +83,11 @@ export const useCategories = () => {
       enqueueSnackbar("Category deleted successfully", { variant: "success" });
       handleCancelDelete();
     },
-    onError: () => {
-      enqueueSnackbar("Failed to delete category", { variant: "error" });
+    onError: (error) => {
+      enqueueSnackbar(
+        error.data?.data?.message ?? "Failed to delete category",
+        { variant: "error" }
+      );
     }
   });
 

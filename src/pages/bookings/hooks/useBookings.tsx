@@ -8,6 +8,7 @@ import { BookingActions } from "../components/BookingActions";
 import { BookingFormData, FormState } from "../types";
 import { enqueueSnackbar } from "notistack";
 import { UpdateBookingFormData } from "../components/UpdateBookingForm";
+import { ErrorResponse } from "@/types/api";
 
 export const useBookings = () => {
   const [filters, setFilters] = useState({
@@ -87,20 +88,30 @@ export const useBookings = () => {
 
   const queryClient = useQueryClient();
 
-  const { mutate: createBooking, isPending: isCreating } = useMutation({
+  const { mutate: createBooking, isPending: isCreating } = useMutation<
+    Booking,
+    ErrorResponse,
+    BookingFormData
+  >({
     mutationFn: bookingService.createBooking,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
       enqueueSnackbar("Booking created successfully", { variant: "success" });
       handleCloseForm();
     },
-    onError: () => {
-      enqueueSnackbar("Failed to create booking", { variant: "error" });
+    onError: (error) => {
+      enqueueSnackbar(error.data?.data?.message ?? "Failed to create booking", {
+        variant: "error"
+      });
     }
   });
 
-  const { mutate: updateStatus, isPending: isUpdating } = useMutation({
-    mutationFn: ({ id, status }: { id: string; status: string }) =>
+  const { mutate: updateStatus, isPending: isUpdating } = useMutation<
+    Booking,
+    ErrorResponse,
+    { id: string; status: string }
+  >({
+    mutationFn: ({ id, status }) =>
       bookingService.updateBookingStatus(id, status),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["bookings"] });
@@ -109,8 +120,11 @@ export const useBookings = () => {
       });
       handleCloseForm();
     },
-    onError: () => {
-      enqueueSnackbar("Failed to update booking status", { variant: "error" });
+    onError: (error) => {
+      enqueueSnackbar(
+        error.data?.data?.message ?? "Failed to update booking status",
+        { variant: "error" }
+      );
     }
   });
 
@@ -158,7 +172,7 @@ export const useBookings = () => {
     onFilterChange: setFilters,
     formState: {
       ...formState,
-      isLoading: isCreating
+      isLoading: isCreating || isUpdating
     },
     handleCreate,
     handleCloseForm,

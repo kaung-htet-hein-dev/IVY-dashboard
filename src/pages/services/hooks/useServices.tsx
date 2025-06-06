@@ -6,6 +6,7 @@ import { useNotification } from "@/hooks/useNotification";
 import { serviceService } from "@/services/serviceService";
 import { ServiceActions } from "../components/ServiceActions";
 import { format } from "date-fns";
+import { ErrorResponse } from "@/types/api";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -34,47 +35,58 @@ export const useServices = () => {
     queryFn: serviceService.getServices
   });
 
-  const { mutate: createService, isPending: isCreating } = useMutation({
+  const { mutate: createService, isPending: isCreating } = useMutation<
+    Service,
+    ErrorResponse,
+    ServiceFormData
+  >({
     mutationFn: serviceService.createService,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
       showNotification("Service created successfully", "success");
       handleCloseForm();
     },
-    onError: (error: any) => {
+    onError: (error) => {
       showNotification(
-        error.response?.data?.message || "Failed to create service",
+        error.data?.data?.message || "Failed to create service",
         "error"
       );
     }
   });
 
-  const { mutate: updateService, isPending: isUpdating } = useMutation({
-    mutationFn: ({ id, data }: { id: string; data: ServiceFormData }) =>
-      serviceService.updateService(id, data),
+  const { mutate: updateService, isPending: isUpdating } = useMutation<
+    Service,
+    ErrorResponse,
+    { id: string; data: ServiceFormData }
+  >({
+    mutationFn: ({ id, data }) => serviceService.updateService(id, data),
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
       showNotification("Service updated successfully", "success");
       handleCloseForm();
     },
-    onError: (error: any) => {
+    onError: (error) => {
       showNotification(
-        error.response?.data?.message || "Failed to update service",
+        error.data?.data?.message || "Failed to update service",
         "error"
       );
     }
   });
 
-  const { mutate: deleteService, isPending: isDeleting } = useMutation({
+  const { mutate: deleteService, isPending: isDeleting } = useMutation<
+    void,
+    ErrorResponse,
+    string
+  >({
     mutationFn: serviceService.deleteService,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["services"] });
       showNotification("Service deleted successfully", "success");
       handleCancelDelete();
     },
-    onError: (error: any) => {
+    onError: (error) => {
       showNotification(
-        error.response?.data?.message || "Failed to delete service",
+        error.data?.data?.message || "Failed to delete service",
         "error"
       );
     }

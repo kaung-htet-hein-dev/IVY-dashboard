@@ -6,6 +6,7 @@ import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { BranchActions } from "../components/BranchActions";
 import { format } from "date-fns";
+import { ErrorResponse } from "@/types/api";
 
 type FormMode = "create" | "edit" | null;
 
@@ -38,7 +39,7 @@ export const useBranches = () => {
 
   const { mutate: createBranch, isPending: isCreating } = useMutation<
     Branch,
-    Error,
+    ErrorResponse,
     BranchFormData
   >({
     mutationFn: branchService.createBranch,
@@ -47,14 +48,16 @@ export const useBranches = () => {
       enqueueSnackbar("Branch created successfully", { variant: "success" });
       handleCloseForm();
     },
-    onError: () => {
-      enqueueSnackbar("Failed to create branch", { variant: "error" });
+    onError: (error) => {
+      enqueueSnackbar(error.data?.data?.message ?? "Failed to create branch", {
+        variant: "error"
+      });
     }
   });
 
   const { mutate: updateBranch, isPending: isUpdating } = useMutation<
     Branch,
-    Error,
+    ErrorResponse,
     { id: string; data: BranchFormData }
   >({
     mutationFn: ({ id, data }) => branchService.updateBranch(id, data),
@@ -63,14 +66,16 @@ export const useBranches = () => {
       enqueueSnackbar("Branch updated successfully", { variant: "success" });
       handleCloseForm();
     },
-    onError: () => {
-      enqueueSnackbar("Failed to update branch", { variant: "error" });
+    onError: (error) => {
+      enqueueSnackbar(error.data?.data?.message ?? "Failed to update branch", {
+        variant: "error"
+      });
     }
   });
 
   const { mutate: deleteBranch, isPending: isDeleting } = useMutation<
     void,
-    Error,
+    ErrorResponse,
     string
   >({
     mutationFn: branchService.deleteBranch,
@@ -79,8 +84,10 @@ export const useBranches = () => {
       enqueueSnackbar("Branch deleted successfully", { variant: "success" });
       handleCancelDelete();
     },
-    onError: () => {
-      enqueueSnackbar("Failed to delete branch", { variant: "error" });
+    onError: (error) => {
+      enqueueSnackbar(error.data?.data?.message ?? "Failed to delete branch", {
+        variant: "error"
+      });
     }
   });
 

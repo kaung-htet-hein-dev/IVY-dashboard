@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { UserActions } from "../components/UserActions";
 import { useNotification } from "@/hooks/useNotification";
-import { AxiosError } from "axios";
+import { ErrorResponse } from "@/types/api";
 
 const columnHelper = createColumnHelper<User>();
 
@@ -20,11 +20,6 @@ type DeleteState = {
   isOpen: boolean;
   user: User | null;
   isLoading: boolean;
-};
-
-type ApiErrorResponse = {
-  message: string;
-  code: number;
 };
 
 export const useUsers = () => {
@@ -46,29 +41,35 @@ export const useUsers = () => {
     queryFn: userService.getUsers
   });
 
-  const updateMutation = useMutation({
+  const updateMutation = useMutation<
+    void,
+    ErrorResponse,
+    Partial<User> & {
+      id: string;
+    }
+  >({
     mutationFn: userService.updateUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       showNotification("User updated successfully", "success");
       handleCloseForm();
     },
-    onError: (error: AxiosError<ApiErrorResponse>) => {
-      const message = error.response?.data?.message || "Failed to update user";
+    onError: (error) => {
+      const message = error?.data?.data?.message || "Failed to update user";
       showNotification(message, "error");
       setFormState((prev) => ({ ...prev, isLoading: false }));
     }
   });
 
-  const deleteMutation = useMutation({
+  const deleteMutation = useMutation<void, ErrorResponse, string>({
     mutationFn: userService.deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });
       showNotification("User deleted successfully", "success");
       handleCancelDelete();
     },
-    onError: (error: AxiosError<ApiErrorResponse>) => {
-      const message = error.response?.data?.message || "Failed to delete user";
+    onError: (error) => {
+      const message = error?.data?.data?.message || "Failed to delete user";
       showNotification(message, "error");
       setDeleteState((prev) => ({ ...prev, isLoading: false }));
     }
