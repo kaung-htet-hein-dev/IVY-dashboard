@@ -8,6 +8,7 @@ import { CategoryActions } from "../components/CategoryActions";
 import { CategoryFormData } from "../types";
 import { format } from "date-fns";
 import { ErrorResponse } from "@/types/api";
+import { showErrorToastWithMessage } from "@/utils/error";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -46,10 +47,7 @@ export const useCategories = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      enqueueSnackbar(
-        error.data?.data?.message ?? "Failed to create category",
-        { variant: "error" }
-      );
+      showErrorToastWithMessage(error);
     }
   });
 
@@ -65,10 +63,7 @@ export const useCategories = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      enqueueSnackbar(
-        error.data?.data?.message ?? "Failed to update category",
-        { variant: "error" }
-      );
+      showErrorToastWithMessage(error);
     }
   });
 
@@ -84,10 +79,7 @@ export const useCategories = () => {
       handleCancelDelete();
     },
     onError: (error) => {
-      enqueueSnackbar(
-        error.data?.data?.message ?? "Failed to delete category",
-        { variant: "error" }
-      );
+      showErrorToastWithMessage(error);
     }
   });
 

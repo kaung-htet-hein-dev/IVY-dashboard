@@ -7,6 +7,7 @@ import { serviceService } from "@/services/serviceService";
 import { ServiceActions } from "../components/ServiceActions";
 import { format } from "date-fns";
 import { ErrorResponse } from "@/types/api";
+import { showErrorToastWithMessage } from "@/utils/error";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -47,10 +48,7 @@ export const useServices = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      showNotification(
-        error.data?.data?.message || "Failed to create service",
-        "error"
-      );
+      showErrorToastWithMessage(error);
     }
   });
 
@@ -66,10 +64,7 @@ export const useServices = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      showNotification(
-        error.data?.data?.message || "Failed to update service",
-        "error"
-      );
+      showErrorToastWithMessage(error);
     }
   });
 
@@ -85,10 +80,7 @@ export const useServices = () => {
       handleCancelDelete();
     },
     onError: (error) => {
-      showNotification(
-        error.data?.data?.message || "Failed to delete service",
-        "error"
-      );
+      showErrorToastWithMessage(error);
     }
   });
 

@@ -1,6 +1,6 @@
-import { AxiosResponse } from "axios";
+import { AxiosError } from "axios";
 
-export type ErrorResponse<T = any> = AxiosResponse<{
+export type ErrorResponse<T = any> = AxiosError<{
   code: number;
   message: string;
   data?: T;

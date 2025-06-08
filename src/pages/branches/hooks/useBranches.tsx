@@ -7,6 +7,7 @@ import React, { useMemo, useState } from "react";
 import { BranchActions } from "../components/BranchActions";
 import { format } from "date-fns";
 import { ErrorResponse } from "@/types/api";
+import { showErrorToastWithMessage } from "@/utils/error";
 
 type FormMode = "create" | "edit" | null;
 
@@ -49,9 +50,7 @@ export const useBranches = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      enqueueSnackbar(error.data?.data?.message ?? "Failed to create branch", {
-        variant: "error"
-      });
+      showErrorToastWithMessage(error);
     }
   });
 
@@ -67,9 +66,7 @@ export const useBranches = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      enqueueSnackbar(error.data?.data?.message ?? "Failed to update branch", {
-        variant: "error"
-      });
+      showErrorToastWithMessage(error);
     }
   });
 
@@ -85,9 +82,7 @@ export const useBranches = () => {
       handleCancelDelete();
     },
     onError: (error) => {
-      enqueueSnackbar(error.data?.data?.message ?? "Failed to delete branch", {
-        variant: "error"
-      });
+      showErrorToastWithMessage(error);
     }
   });
 

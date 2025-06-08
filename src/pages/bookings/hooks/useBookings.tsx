@@ -9,6 +9,7 @@ import { BookingFormData, FormState } from "../types";
 import { enqueueSnackbar } from "notistack";
 import { UpdateBookingFormData } from "../components/UpdateBookingForm";
 import { ErrorResponse } from "@/types/api";
+import { showErrorToastWithMessage } from "@/utils/error";
 
 export const useBookings = () => {
   const [filters, setFilters] = useState({
@@ -100,9 +101,7 @@ export const useBookings = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      enqueueSnackbar(error.data?.data?.message ?? "Failed to create booking", {
-        variant: "error"
-      });
+      showErrorToastWithMessage(error);
     }
   });
 
@@ -121,10 +120,7 @@ export const useBookings = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      enqueueSnackbar(
-        error.data?.data?.message ?? "Failed to update booking status",
-        { variant: "error" }
-      );
+      showErrorToastWithMessage(error);
     }
   });
 
