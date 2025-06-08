@@ -8,6 +8,7 @@ import { BranchActions } from "../components/BranchActions";
 import { format } from "date-fns";
 import { ErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
+import { BranchFormData } from "../types";
 
 type FormMode = "create" | "edit" | null;
 
@@ -20,8 +21,6 @@ interface DeleteState {
   isOpen: boolean;
   branch?: Branch;
 }
-
-type BranchFormData = Omit<Branch, "id">;
 
 export const useBranches = () => {
   const { enqueueSnackbar } = useSnackbar();
@@ -41,7 +40,7 @@ export const useBranches = () => {
   const { mutate: createBranch, isPending: isCreating } = useMutation<
     Branch,
     ErrorResponse,
-    BranchFormData
+    Omit<Branch, "id">
   >({
     mutationFn: branchService.createBranch,
     onSuccess: () => {
@@ -116,9 +115,9 @@ export const useBranches = () => {
     await deleteBranch(deleteState.branch.id);
   };
 
-  const handleSubmit = async (data: BranchFormData) => {
+  const handleSubmit = async (data: BranchFormData | Omit<Branch, "id">) => {
     if (formState.mode === "create") {
-      await createBranch(data);
+      await createBranch(data as Omit<Branch, "id">);
     } else if (formState.mode === "edit" && formState.branch) {
       await updateBranch({
         id: formState.branch.id,
