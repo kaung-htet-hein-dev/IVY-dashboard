@@ -1,52 +1,31 @@
-import { NextResponse } from "next/server";
-import type { NextRequest } from "next/server";
+import { clerkMiddleware, createRouteMatcher } from "@clerk/nextjs/server";
 
-// Add routes that don't require authentication
-const publicRoutes = ["/login"];
+// Create matchers for public and protected routes
+const isPublicRoute = createRouteMatcher(["/sign-in(.*)", "/sign-up(.*)"]);
+const isProtectedRoute = createRouteMatcher([
+  "/bookings(.*)",
+  "/settings(.*)",
+  "/branches(.*)",
+  "/users(.*)",
+  "/categories(.*)",
+  "/services(.*)"
+]);
 
-// Add routes that require authentication
-const protectedRoutes = [
-  "/bookings",
-  "/settings",
-  "/branches",
-  "/users",
-  "/categories",
-  "/services"
-];
-
-export function middleware(request: NextRequest) {
-  const { pathname } = request.nextUrl;
-  const token = request.cookies.get("auth_token")?.value;
-
-  // Exact match for home page
-  if (pathname === "/" && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
+export default clerkMiddleware(async (auth, req) => {
+  if (isProtectedRoute(req)) {
+    // Protect all matched routes
+    await auth.protect();
+  } else if (!isPublicRoute(req)) {
+    // If not public and not protected, protect it by default
+    await auth.protect();
   }
+});
 
-  // If the user is trying to access a protected route without being authenticated
-  if (protectedRoutes.some((route) => pathname.startsWith(route)) && !token) {
-    return NextResponse.redirect(new URL("/login", request.url));
-  }
-
-  // If the user is authenticated and trying to access login page
-  if (publicRoutes.includes(pathname) && token) {
-    return NextResponse.redirect(new URL("/", request.url));
-  }
-
-  return NextResponse.next();
-}
-
-// Configure which routes should be handled by this middleware
 export const config = {
   matcher: [
-    /*
-     * Match all request paths except for the ones starting with:
-     * - api (API routes)
-     * - _next/static (static files)
-     * - _next/image (image optimization files)
-     * - favicon.ico (favicon file)
-     * - public folder
-     */
-    "/((?!api|_next/static|_next/image|favicon.ico|public).*)"
+    // Skip Next.js internals and all static files
+    "/((?!_next|[^?]*\\.(?:html?|css|js(?!on)|jpe?g|webp|png|gif|svg|ttf|woff2?|ico|csv|docx?|xlsx?|zip|webmanifest)).*)",
+    // Always run for API routes
+    "/(api|trpc)(.*)"
   ]
 };

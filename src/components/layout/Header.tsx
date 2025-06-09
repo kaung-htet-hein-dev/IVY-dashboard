@@ -1,20 +1,14 @@
+import { Menu as MenuIcon } from "@mui/icons-material";
 import {
   AppBar,
   IconButton,
   Toolbar,
   Typography,
-  Avatar,
-  Box,
-  Menu,
-  MenuItem,
-  styled
+  styled,
+  useMediaQuery,
+  useTheme
 } from "@mui/material";
-import { Menu as MenuIcon } from "@mui/icons-material";
-import { useState } from "react";
-import { useRouter } from "next/router";
-import { useAuthStore } from "@/store/useAuthStore";
-import { endpoints } from "@/api/endpoints";
-import { axiosInstance } from "@/api/axios";
+import { UserButton } from "@clerk/nextjs";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1
@@ -26,28 +20,7 @@ interface HeaderProps {
 }
 
 export const Header = ({ onMenuClick, isMobile }: HeaderProps) => {
-  const router = useRouter();
-  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
-  const { logout } = useAuthStore();
-
-  const handleMenu = (event: React.MouseEvent<HTMLElement>) => {
-    setAnchorEl(event.currentTarget);
-  };
-
-  const handleClose = () => {
-    setAnchorEl(null);
-  };
-
-  const handleLogout = async () => {
-    try {
-      await axiosInstance.post(endpoints.logout);
-      logout();
-      router.push("/login");
-    } catch (error) {
-      console.error("Logout failed:", error);
-    }
-    handleClose();
-  };
+  const theme = useTheme();
 
   return (
     <StyledAppBar position="fixed">
@@ -72,40 +45,7 @@ export const Header = ({ onMenuClick, isMobile }: HeaderProps) => {
         >
           IVY Admin
         </Typography>
-        <Box>
-          <IconButton
-            size="large"
-            aria-label="account of current user"
-            aria-controls="menu-appbar"
-            aria-haspopup="true"
-            onClick={handleMenu}
-            color="inherit"
-          >
-            <Avatar
-              sx={{ width: isMobile ? 28 : 32, height: isMobile ? 28 : 32 }}
-            >
-              A
-            </Avatar>
-          </IconButton>
-          <Menu
-            id="menu-appbar"
-            anchorEl={anchorEl}
-            anchorOrigin={{
-              vertical: "bottom",
-              horizontal: "right"
-            }}
-            keepMounted
-            transformOrigin={{
-              vertical: "top",
-              horizontal: "right"
-            }}
-            open={Boolean(anchorEl)}
-            onClose={handleClose}
-          >
-            <MenuItem onClick={() => router.push("/profile")}>Profile</MenuItem>
-            <MenuItem onClick={handleLogout}>Logout</MenuItem>
-          </Menu>
-        </Box>
+        <UserButton afterSignOutUrl="/login" />
       </Toolbar>
     </StyledAppBar>
   );

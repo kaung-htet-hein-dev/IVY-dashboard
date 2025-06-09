@@ -1,3 +1,3 @@
 export const paths = {
-  login: "/login"
+  login: "/sign-in"
 };

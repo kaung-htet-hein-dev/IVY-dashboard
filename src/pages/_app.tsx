@@ -5,6 +5,7 @@ import type { AppProps } from "next/app";
 import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { SnackbarProvider } from "notistack";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -30,10 +31,12 @@ const queryClient = new QueryClient({
 
 export default function App({ Component, pageProps }: AppProps) {
   const router = useRouter();
-  const isLoginPage = router.pathname === "/login";
+  const showDrawer =
+    router.pathname.startsWith("/sign-in") ||
+    router.pathname.startsWith("/sign-up");
 
   return (
-    <>
+    <ClerkProvider>
       <ThemeProvider theme={theme}>
         <CssBaseline />
         <QueryClientProvider client={queryClient}>
@@ -45,7 +48,7 @@ export default function App({ Component, pageProps }: AppProps) {
             }}
             autoHideDuration={3000}
           >
-            {!isLoginPage ? (
+            {!showDrawer ? (
               <Layout>
                 <Component {...pageProps} />
               </Layout>
@@ -55,6 +58,6 @@ export default function App({ Component, pageProps }: AppProps) {
           </SnackbarProvider>
         </QueryClientProvider>
       </ThemeProvider>
-    </>
+    </ClerkProvider>
   );
 }
