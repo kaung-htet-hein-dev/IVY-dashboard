@@ -1,6 +1,6 @@
 import { Booking, BookingResponse } from "@/types/booking";
-import { endpoints } from "@/api/endpoints";
-import { axiosInstance } from "@/api/axios";
+import { endpoints } from "@/apiClient/endpoints";
+import { axiosInstance } from "@/apiClient/axios";
 import { BookingFormData } from "@/pages/bookings/types";
 import { format } from "date-fns";
 import { TimeSlot } from "@/pages/bookings/types";

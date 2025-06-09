@@ -1,6 +1,6 @@
 import { Service, ServiceFormData, ServicesResponse } from "@/types/service";
-import { endpoints } from "@/api/endpoints";
-import { axiosInstance } from "@/api/axios";
+import { endpoints } from "@/apiClient/endpoints";
+import { axiosInstance } from "@/apiClient/axios";
 
 export const serviceService = {
   getServices: async (): Promise<Service[]> => {

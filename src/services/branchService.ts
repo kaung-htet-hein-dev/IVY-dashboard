@@ -1,7 +1,7 @@
 import axios from "axios";
 import { Branch, BranchResponse } from "@/types/branch";
-import { endpoints } from "@/api/endpoints";
-import { axiosInstance } from "@/api/axios";
+import { endpoints } from "@/apiClient/endpoints";
+import { axiosInstance } from "@/apiClient/axios";
 
 export const branchService = {
   getBranches: async (): Promise<Branch[]> => {

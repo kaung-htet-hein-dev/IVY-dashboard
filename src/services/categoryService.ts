@@ -3,8 +3,8 @@ import {
   CategoryResponse,
   SingleCategoryResponse
 } from "@/types/category";
-import { endpoints } from "@/api/endpoints";
-import { axiosInstance } from "@/api/axios";
+import { endpoints } from "@/apiClient/endpoints";
+import { axiosInstance } from "@/apiClient/axios";
 
 export const categoryService = {
   getCategories: async (): Promise<Category[]> => {
