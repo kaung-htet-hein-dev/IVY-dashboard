@@ -6,7 +6,7 @@ import { useNotification } from "@/hooks/useNotification";
 import { serviceService } from "@/services/serviceService";
 import { ServiceActions } from "../components/ServiceActions";
 import { format } from "date-fns";
-import { ErrorResponse } from "@/types/api";
+import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
 
 interface FormState {
@@ -38,7 +38,7 @@ export const useServices = () => {
 
   const { mutate: createService, isPending: isCreating } = useMutation<
     Service,
-    ErrorResponse,
+    ApiErrorResponse,
     ServiceFormData
   >({
     mutationFn: serviceService.createService,
@@ -54,7 +54,7 @@ export const useServices = () => {
 
   const { mutate: updateService, isPending: isUpdating } = useMutation<
     Service,
-    ErrorResponse,
+    ApiErrorResponse,
     { id: string; data: ServiceFormData }
   >({
     mutationFn: ({ id, data }) => serviceService.updateService(id, data),
@@ -70,7 +70,7 @@ export const useServices = () => {
 
   const { mutate: deleteService, isPending: isDeleting } = useMutation<
     void,
-    ErrorResponse,
+    ApiErrorResponse,
     string
   >({
     mutationFn: serviceService.deleteService,

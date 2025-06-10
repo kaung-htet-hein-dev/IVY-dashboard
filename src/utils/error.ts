@@ -1,7 +1,7 @@
-import { ErrorResponse } from "@/types/api";
+import { ApiErrorResponse } from "@/types/api";
 import { enqueueSnackbar } from "notistack";
 
-export const showErrorToastWithMessage = (error: ErrorResponse) => {
+export const showErrorToastWithMessage = (error: ApiErrorResponse) => {
   enqueueSnackbar(
     error.response?.data?.message ??
       error?.message ??

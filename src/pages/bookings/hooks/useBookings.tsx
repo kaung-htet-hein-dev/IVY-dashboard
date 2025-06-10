@@ -8,7 +8,7 @@ import { BookingActions } from "../components/BookingActions";
 import { BookingFormData, FormState } from "../types";
 import { enqueueSnackbar } from "notistack";
 import { UpdateBookingFormData } from "../components/UpdateBookingForm";
-import { ErrorResponse } from "@/types/api";
+import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
 
 export const useBookings = () => {
@@ -91,7 +91,7 @@ export const useBookings = () => {
 
   const { mutate: createBooking, isPending: isCreating } = useMutation<
     Booking,
-    ErrorResponse,
+    ApiErrorResponse,
     BookingFormData
   >({
     mutationFn: bookingService.createBooking,
@@ -107,7 +107,7 @@ export const useBookings = () => {
 
   const { mutate: updateStatus, isPending: isUpdating } = useMutation<
     Booking,
-    ErrorResponse,
+    ApiErrorResponse,
     { id: string; status: string }
   >({
     mutationFn: ({ id, status }) =>

@@ -6,7 +6,7 @@ import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { BranchActions } from "../components/BranchActions";
 import { format } from "date-fns";
-import { ErrorResponse } from "@/types/api";
+import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
 import { BranchFormData } from "../types";
 
@@ -39,7 +39,7 @@ export const useBranches = () => {
 
   const { mutate: createBranch, isPending: isCreating } = useMutation<
     Branch,
-    ErrorResponse,
+    ApiErrorResponse,
     Omit<Branch, "id">
   >({
     mutationFn: branchService.createBranch,
@@ -55,7 +55,7 @@ export const useBranches = () => {
 
   const { mutate: updateBranch, isPending: isUpdating } = useMutation<
     Branch,
-    ErrorResponse,
+    ApiErrorResponse,
     { id: string; data: BranchFormData }
   >({
     mutationFn: ({ id, data }) => branchService.updateBranch(id, data),
@@ -71,7 +71,7 @@ export const useBranches = () => {
 
   const { mutate: deleteBranch, isPending: isDeleting } = useMutation<
     void,
-    ErrorResponse,
+    ApiErrorResponse,
     string
   >({
     mutationFn: branchService.deleteBranch,

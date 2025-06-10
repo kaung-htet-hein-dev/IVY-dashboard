@@ -1,4 +1,3 @@
-import { categoryService } from "@/services/categoryService";
 import { Category } from "@/types/category";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -7,8 +6,9 @@ import React, { useMemo, useState } from "react";
 import { CategoryActions } from "../components/CategoryActions";
 import { CategoryFormData } from "../types";
 import { format } from "date-fns";
-import { ErrorResponse } from "@/types/api";
+import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
+import { useCategoryService } from "./useCategoryService";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -23,6 +23,7 @@ interface DeleteState {
 export const useCategories = () => {
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
+  const categoryService = useCategoryService();
   const [formState, setFormState] = useState<FormState>({
     mode: null
   });
@@ -37,7 +38,7 @@ export const useCategories = () => {
 
   const { mutate: createCategory, isPending: isCreating } = useMutation<
     Category,
-    ErrorResponse,
+    ApiErrorResponse,
     CategoryFormData
   >({
     mutationFn: categoryService.createCategory,
@@ -53,7 +54,7 @@ export const useCategories = () => {
 
   const { mutate: updateCategory, isPending: isUpdating } = useMutation<
     Category,
-    ErrorResponse,
+    ApiErrorResponse,
     { id: string; data: CategoryFormData }
   >({
     mutationFn: ({ id, data }) => categoryService.updateCategory(id, data),
@@ -69,7 +70,7 @@ export const useCategories = () => {
 
   const { mutate: deleteCategory, isPending: isDeleting } = useMutation<
     void,
-    ErrorResponse,
+    ApiErrorResponse,
     string
   >({
     mutationFn: categoryService.deleteCategory,

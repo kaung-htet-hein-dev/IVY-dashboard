@@ -6,7 +6,7 @@ import { format } from "date-fns";
 import { useState } from "react";
 import { UserActions } from "../components/UserActions";
 import { useNotification } from "@/hooks/useNotification";
-import { ErrorResponse } from "@/types/api";
+import { ApiErrorResponse } from "@/types/api";
 
 const columnHelper = createColumnHelper<User>();
 
@@ -43,7 +43,7 @@ export const useUsers = () => {
 
   const updateMutation = useMutation<
     void,
-    ErrorResponse,
+    ApiErrorResponse,
     Partial<User> & {
       id: string;
     }
@@ -61,7 +61,7 @@ export const useUsers = () => {
     }
   });
 
-  const deleteMutation = useMutation<void, ErrorResponse, string>({
+  const deleteMutation = useMutation<void, ApiErrorResponse, string>({
     mutationFn: userService.deleteUser,
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["users"] });

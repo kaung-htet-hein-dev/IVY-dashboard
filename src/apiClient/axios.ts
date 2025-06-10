@@ -1,26 +1,45 @@
-import axios from "axios";
+import axios, {
+  AxiosInstance,
+  AxiosError,
+  InternalAxiosRequestConfig
+} from "axios";
+import { ApiErrorResponse } from "@/types/api";
 
 const baseURL = process.env.NEXT_PUBLIC_API_URL;
 
-export const axiosInstance = axios.create({
-  baseURL,
-  headers: {
-    "Content-Type": "application/json"
-  }
-});
-
-// Add request interceptor for authentication
-axiosInstance.interceptors.request.use(async (config) => {
-  return config;
-});
-
-// Add response interceptor for error handling
-axiosInstance.interceptors.response.use(
-  (response) => response,
-  (error) => {
-    if (error.response?.status === 401 && typeof window !== "undefined") {
-      window.location.href = "/sign-in";
+export const createAxiosInstance = (
+  getToken: () => Promise<string | null>,
+  onAuthError: () => void
+): AxiosInstance => {
+  const axiosInstance = axios.create({
+    baseURL,
+    headers: {
+      "Content-Type": "application/json"
     }
-    return Promise.reject(error);
-  }
-);
+  });
+
+  axiosInstance.interceptors.request.use(
+    async (config: InternalAxiosRequestConfig) => {
+      const token = await getToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
+      return config;
+    },
+    (error: AxiosError) => {
+      return Promise.reject(error);
+    }
+  );
+
+  axiosInstance.interceptors.response.use(
+    (response) => response,
+    (error: ApiErrorResponse) => {
+      if (error.response?.status === 401) {
+        onAuthError();
+      }
+      return Promise.reject(error);
+    }
+  );
+
+  return axiosInstance;
+};
