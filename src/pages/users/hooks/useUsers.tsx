@@ -1,4 +1,3 @@
-import { userService } from "@/services/userService";
 import { User } from "@/types/user";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { createColumnHelper } from "@tanstack/react-table";
@@ -7,6 +6,8 @@ import { useState } from "react";
 import { UserActions } from "../components/UserActions";
 import { useNotification } from "@/hooks/useNotification";
 import { ApiErrorResponse } from "@/types/api";
+import useUserService from "./useUserService";
+import { showErrorToastWithMessage } from "@/utils/error";
 
 const columnHelper = createColumnHelper<User>();
 
@@ -23,6 +24,7 @@ type DeleteState = {
 };
 
 export const useUsers = () => {
+  const userService = useUserService();
   const queryClient = useQueryClient();
   const { showNotification } = useNotification();
   const [formState, setFormState] = useState<FormState>({
@@ -55,8 +57,7 @@ export const useUsers = () => {
       handleCloseForm();
     },
     onError: (error) => {
-      const message = error?.data?.data?.message || "Failed to update user";
-      showNotification(message, "error");
+      showErrorToastWithMessage(error);
       setFormState((prev) => ({ ...prev, isLoading: false }));
     }
   });
@@ -69,8 +70,7 @@ export const useUsers = () => {
       handleCancelDelete();
     },
     onError: (error) => {
-      const message = error?.data?.data?.message || "Failed to delete user";
-      showNotification(message, "error");
+      showErrorToastWithMessage(error);
       setDeleteState((prev) => ({ ...prev, isLoading: false }));
     }
   });
