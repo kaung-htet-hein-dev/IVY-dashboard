@@ -1,4 +1,3 @@
-import { bookingService } from "@/services/bookingService";
 import { Booking } from "@/types/booking";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
@@ -10,8 +9,10 @@ import { enqueueSnackbar } from "notistack";
 import { UpdateBookingFormData } from "../components/UpdateBookingForm";
 import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
+import useBookingService from "./useBookingService";
 
 export const useBookings = () => {
+  const bookingService = useBookingService();
   const [filters, setFilters] = useState({
     status: "",
     bookedDate: null as Date | null

@@ -3,16 +3,17 @@ import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BookingFormData, TimeSlot, bookingFormSchema } from "../types";
-import { serviceService } from "@/services/serviceService";
 import { Service } from "@/types/service";
 import { bookingService } from "@/services/bookingService";
 import { format, addDays } from "date-fns";
+import useServiceService from "@/pages/services/hooks/useServiceService";
 
 interface UseBookingFormProps {
   open: boolean;
 }
 
 export const useBookingForm = ({ open }: UseBookingFormProps) => {
+  const serviceService = useServiceService();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 
   const {
