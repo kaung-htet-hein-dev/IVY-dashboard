@@ -3,11 +3,11 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { ColumnDef } from "@tanstack/react-table";
 import { Service, ServiceFormData } from "@/types/service";
 import { useNotification } from "@/hooks/useNotification";
-import { serviceService } from "@/services/serviceService";
 import { ServiceActions } from "../components/ServiceActions";
 import { format } from "date-fns";
 import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
+import useServiceService from "./useServiceService";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -22,6 +22,7 @@ interface DeleteState {
 }
 
 export const useServices = () => {
+  const serviceService = useServiceService();
   const queryClient = useQueryClient();
   const { showNotification } = useNotification();
   const [formState, setFormState] = useState<FormState>({
