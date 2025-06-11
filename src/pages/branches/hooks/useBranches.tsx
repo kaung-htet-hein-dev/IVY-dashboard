@@ -1,4 +1,3 @@
-import { branchService } from "@/services/branchService";
 import { Branch } from "@/types/branch";
 import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -9,6 +8,7 @@ import { format } from "date-fns";
 import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
 import { BranchFormData } from "../types";
+import useBranchService from "./useBranchService";
 
 type FormMode = "create" | "edit" | null;
 
@@ -23,6 +23,8 @@ interface DeleteState {
 }
 
 export const useBranches = () => {
+  const branchService = useBranchService();
+
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
   const [formState, setFormState] = useState<FormState>({
