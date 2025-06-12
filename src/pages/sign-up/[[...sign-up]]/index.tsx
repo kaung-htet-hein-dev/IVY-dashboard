@@ -1,7 +1,18 @@
 import { Box, Container } from "@mui/material";
 import { SignUp } from "@clerk/nextjs";
+import { useEffect } from "react";
+import { useRouter } from "next/router";
 
 export default function SignUpPage() {
+  const router = useRouter();
+
+  useEffect(() => {
+    // Redirect to sign-in page since sign-up is disabled for admin dashboard
+    router.replace("/sign-in");
+  }, [router]);
+
+  return null;
+
   return (
     <Container component="main" maxWidth="xs">
       <Box

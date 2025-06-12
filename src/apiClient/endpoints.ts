@@ -1,5 +1,6 @@
 export const endpoints = {
   // Auth
+  userProfile: "/api/v1/user/me",
 
   // Branches
   branches: "/api/v1/branch",

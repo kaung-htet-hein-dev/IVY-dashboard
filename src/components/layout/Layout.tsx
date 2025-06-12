@@ -1,7 +1,16 @@
-import { Box, styled, useMediaQuery, Theme } from "@mui/material";
+import {
+  Box,
+  styled,
+  useMediaQuery,
+  Theme,
+  CircularProgress
+} from "@mui/material";
 import { useState, ReactNode, useEffect } from "react";
+import { useAuth } from "@clerk/nextjs";
 import { Header } from "./Header";
 import { Drawer } from "./Drawer";
+import { useCurrentUser } from "@/hooks/useCurrentUser";
+import { UnauthorizedAccessWarning } from "@/components/auth/UnauthorizedAccessWarning";
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   open?: boolean;
@@ -40,6 +49,12 @@ interface LayoutProps {
 }
 
 export const Layout = ({ children }: LayoutProps) => {
+  const { isSignedIn, isLoaded } = useAuth();
+  const {
+    data: currentUser,
+    isLoading: isUserLoading,
+    error
+  } = useCurrentUser();
   const isMobile = useMediaQuery((theme: Theme) =>
     theme.breakpoints.down("sm")
   );
@@ -58,9 +73,38 @@ export const Layout = ({ children }: LayoutProps) => {
     }
   };
 
+  // Show loading while Clerk is loading or user data is loading
+  if (!isLoaded || (isSignedIn && isUserLoading)) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          minHeight: "100vh"
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
+
+  // If user is signed in and we have user data, check their role
+  if (isSignedIn && currentUser) {
+    // If user role is "USER", show warning and logout
+    if (currentUser.role === "USER") {
+      return <UnauthorizedAccessWarning />;
+    }
+  }
+
+  // If there's an error fetching user data, show warning
+  if (isSignedIn && error) {
+    return <UnauthorizedAccessWarning />;
+  }
+
   return (
     <Box sx={{ display: "flex" }}>
-      <Header onMenuClick={handleDrawerToggle} isMobile={isMobile} />
+      <Header onMenuClick={handleDrawerToggle} />
       <Drawer
         open={isMobile ? mobileOpen : open}
         onDrawerClose={handleDrawerToggle}
