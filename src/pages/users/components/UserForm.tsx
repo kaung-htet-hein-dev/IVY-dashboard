@@ -22,9 +22,27 @@ import { useEffect } from "react";
 import { Close } from "@mui/icons-material";
 
 const updateUserSchema = z.object({
-  name: z.string().min(1, "Name is required"),
   phone_number: z.string().min(1, "Phone number is required"),
-  role: z.enum(["ADMIN", "USER"])
+  role: z.enum(["ADMIN", "USER"]),
+  gender: z.string().min(1, "Gender is required"),
+  birthday: z
+    .string()
+    .min(1, "Birthday is required")
+    .regex(
+      /^(\d{2})\/(\d{2})\/(\d{4})$/,
+      "Birthday must be in dd/mm/yyyy format"
+    )
+    .refine((date) => {
+      const [day, month, year] = date.split("/").map(Number);
+      const birthDate = new Date(year, month - 1, day);
+      const today = new Date();
+      const fiveYearsAgo = new Date(
+        today.getFullYear() - 5,
+        today.getMonth(),
+        today.getDate()
+      );
+      return birthDate <= fiveYearsAgo;
+    }, "Age cannot be more than 5 years")
 });
 
 type UpdateUserData = z.infer<typeof updateUserSchema>;
@@ -52,18 +70,20 @@ export const UserForm = ({
   } = useForm<UpdateUserData>({
     resolver: zodResolver(updateUserSchema),
     defaultValues: {
-      name: initialData?.name || "",
-      phone_number: initialData?.phone_number || "",
-      role: initialData?.role || "USER"
+      phone_number: "",
+      role: initialData?.role || "USER",
+      gender: initialData?.gender || "",
+      birthday: initialData?.birthday || ""
     }
   });
 
   useEffect(() => {
     if (initialData) {
       reset({
-        name: initialData.name,
         phone_number: initialData.phone_number,
-        role: initialData.role
+        role: initialData.role,
+        gender: initialData.gender,
+        birthday: initialData.birthday
       });
     }
   }, [initialData, reset]);
@@ -113,20 +133,6 @@ export const UserForm = ({
         <DialogContent dividers>
           <Stack spacing={2}>
             <Controller
-              name="name"
-              control={control}
-              render={({ field }) => (
-                <TextField
-                  {...field}
-                  label="Name"
-                  error={!!errors.name}
-                  helperText={errors.name?.message}
-                  fullWidth
-                  disabled={isLoading}
-                />
-              )}
-            />
-            <Controller
               name="phone_number"
               control={control}
               render={({ field }) => (
@@ -135,6 +141,42 @@ export const UserForm = ({
                   label="Phone Number"
                   error={!!errors.phone_number}
                   helperText={errors.phone_number?.message}
+                  fullWidth
+                  disabled={isLoading}
+                />
+              )}
+            />
+            <Controller
+              name="gender"
+              control={control}
+              render={({ field }) => (
+                <FormControl
+                  error={!!errors.gender}
+                  fullWidth
+                  disabled={isLoading}
+                >
+                  <InputLabel>Gender</InputLabel>
+                  <Select {...field} label="Gender">
+                    <MenuItem value="male">Male</MenuItem>
+                    <MenuItem value="female">Female</MenuItem>
+                    <MenuItem value="other">Other</MenuItem>
+                  </Select>
+                  {errors.gender && (
+                    <FormHelperText>{errors.gender.message}</FormHelperText>
+                  )}
+                </FormControl>
+              )}
+            />
+            <Controller
+              name="birthday"
+              control={control}
+              render={({ field }) => (
+                <TextField
+                  {...field}
+                  label="Birthday (dd/mm/yyyy)"
+                  placeholder="24/03/1997"
+                  error={!!errors.birthday}
+                  helperText={errors.birthday?.message}
                   fullWidth
                   disabled={isLoading}
                 />

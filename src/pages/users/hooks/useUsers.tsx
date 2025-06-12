@@ -138,8 +138,12 @@ export const useUsers = () => {
   };
 
   const columns = [
-    columnHelper.accessor("name", {
-      header: "Name",
+    columnHelper.accessor("first_name", {
+      header: "First Name",
+      cell: (props) => props.getValue()
+    }),
+    columnHelper.accessor("last_name", {
+      header: "Last Name",
       cell: (props) => props.getValue()
     }),
     columnHelper.accessor("email", {
@@ -150,15 +154,27 @@ export const useUsers = () => {
       header: "Phone Number",
       cell: (props) => props.getValue()
     }),
+    columnHelper.accessor("birthday", {
+      header: "Birthday",
+      cell: (props) => props.getValue()
+    }),
     columnHelper.accessor("role", {
       header: "Role",
       cell: (props) => props.getValue()
     }),
-    columnHelper.accessor("create_at", {
+    columnHelper.accessor("verified", {
+      header: "Verified",
+      cell: (props) => (props.getValue() ? "Yes" : "No")
+    }),
+    columnHelper.accessor("gender", {
+      header: "Gender",
+      cell: (props) => props.getValue() || "unkown"
+    }),
+    columnHelper.accessor("created_at", {
       header: "Created At",
       cell: (props) => format(new Date(props.getValue()), "PPpp")
     }),
-    columnHelper.accessor("update_at", {
+    columnHelper.accessor("updated_at", {
       header: "Updated At",
       cell: (props) => format(new Date(props.getValue()), "PPpp")
     }),
@@ -169,7 +185,6 @@ export const useUsers = () => {
           user={props.row.original}
           onView={() => handleView(props.row.original)}
           onEdit={() => handleEdit(props.row.original)}
-          onDelete={() => handleDelete(props.row.original)}
         />
       )
     })

@@ -1,51 +1,48 @@
-import { Menu as MenuIcon } from "@mui/icons-material";
-import {
-  AppBar,
-  IconButton,
-  Toolbar,
-  Typography,
-  styled,
-  useMediaQuery,
-  useTheme
-} from "@mui/material";
 import { UserButton } from "@clerk/nextjs";
+import { Menu as MenuIcon } from "@mui/icons-material";
+import { AppBar, IconButton, Toolbar, Typography, styled } from "@mui/material";
 
 const StyledAppBar = styled(AppBar)(({ theme }) => ({
   zIndex: theme.zIndex.drawer + 1
 }));
 
+const StyledIconButton = styled(IconButton)(({ theme }) => ({
+  marginRight: theme.spacing(2)
+}));
+
+const StyledTypography = styled(Typography)(({ theme }) => ({
+  flexGrow: 1,
+  [theme.breakpoints.down("sm")]: {
+    fontSize: "1.1rem"
+  }
+}));
+
 interface HeaderProps {
   onMenuClick: () => void;
-  isMobile?: boolean;
 }
 
-export const Header = ({ onMenuClick, isMobile }: HeaderProps) => {
-  const theme = useTheme();
-
+export const Header = ({ onMenuClick }: HeaderProps) => {
   return (
     <StyledAppBar position="fixed">
       <Toolbar>
-        <IconButton
+        <StyledIconButton
           color="inherit"
           aria-label="open drawer"
           onClick={onMenuClick}
           edge="start"
-          sx={{ marginRight: 2 }}
         >
           <MenuIcon />
-        </IconButton>
-        <Typography
-          variant={isMobile ? "h6" : "h5"}
+        </StyledIconButton>
+        <StyledTypography
+          variant="h5"
           noWrap
-          component="div"
           sx={{
-            flexGrow: 1,
-            fontSize: isMobile ? "1.1rem" : undefined
+            fontSize: { xs: "1.1rem", sm: "inherit" }
           }}
         >
           IVY Admin
-        </Typography>
-        <UserButton afterSignOutUrl="/login" />
+        </StyledTypography>
+        <UserButton />
       </Toolbar>
     </StyledAppBar>
   );

@@ -4,15 +4,16 @@ import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { BookingFormData, TimeSlot, bookingFormSchema } from "../types";
 import { Service } from "@/types/service";
-import { bookingService } from "@/services/bookingService";
 import { format, addDays } from "date-fns";
 import useServiceService from "@/pages/services/hooks/useServiceService";
+import useBookingService from "./useBookingService";
 
 interface UseBookingFormProps {
   open: boolean;
 }
 
 export const useBookingForm = ({ open }: UseBookingFormProps) => {
+  const bookingService = useBookingService();
   const serviceService = useServiceService();
   const [selectedService, setSelectedService] = useState<Service | null>(null);
 

@@ -37,7 +37,7 @@ export default function UsersPage() {
       <ConfirmationDialog
         open={deleteState.isOpen}
         title="Delete User"
-        message={`Are you sure you want to delete ${deleteState.user?.name}? This action cannot be undone.`}
+        message={`Are you sure you want to delete ${deleteState.user?.first_name} ${deleteState.user?.last_name}? This action cannot be undone.`}
         onConfirm={handleConfirmDelete}
         onCancel={handleCancelDelete}
         isLoading={deleteState.isLoading}

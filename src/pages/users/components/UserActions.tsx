@@ -5,7 +5,7 @@ interface UserActionsProps {
   user: User;
   onView: () => void;
   onEdit: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
 }
 
 export const UserActions = ({ onView, onEdit, onDelete }: UserActionsProps) => {

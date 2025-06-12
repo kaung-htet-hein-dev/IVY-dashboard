@@ -4,7 +4,7 @@ import { IconButton, Stack, Tooltip } from "@mui/material";
 interface TableActionsProps {
   onView: () => void;
   onEdit: () => void;
-  onDelete: () => void;
+  onDelete?: () => void;
 }
 
 export const TableActions = ({
@@ -24,11 +24,13 @@ export const TableActions = ({
           <Edit fontSize="small" />
         </IconButton>
       </Tooltip>
-      <Tooltip title="Delete">
-        <IconButton size="small" onClick={onDelete} color="error">
-          <Delete fontSize="small" />
-        </IconButton>
-      </Tooltip>
+      {onDelete && (
+        <Tooltip title="Delete">
+          <IconButton size="small" onClick={onDelete} color="error">
+            <Delete fontSize="small" />
+          </IconButton>
+        </Tooltip>
+      )}
     </Stack>
   );
 };

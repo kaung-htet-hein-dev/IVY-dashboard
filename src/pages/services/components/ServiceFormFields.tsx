@@ -1,5 +1,3 @@
-import { branchService } from "@/services/branchService";
-import { categoryService } from "@/services/categoryService";
 import {
   Checkbox,
   FormControl,
@@ -22,6 +20,8 @@ import {
   UseFormRegister
 } from "react-hook-form";
 import { ServiceFormData } from "../types";
+import useCategoryService from "@/pages/categories/hooks/useCategoryService";
+import useBranchService from "@/pages/branches/hooks/useBranchService";
 
 interface ServiceFormFieldsProps {
   register: UseFormRegister<ServiceFormData>;
@@ -36,6 +36,8 @@ export const ServiceFormFields = ({
   errors,
   disabled = false
 }: ServiceFormFieldsProps) => {
+  const categoryService = useCategoryService();
+  const branchService = useBranchService();
   const { data: categories = [], isFetching: categoryFetching } = useQuery({
     queryKey: ["categories"],
     queryFn: categoryService.getCategories
