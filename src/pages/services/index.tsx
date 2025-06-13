@@ -17,7 +17,9 @@ export default function ServicesPage() {
     handleSubmit,
     deleteState,
     handleCancelDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    pagination,
+    setPagination
   } = useServices();
 
   return (
@@ -34,10 +36,12 @@ export default function ServicesPage() {
       </Box>
 
       <DataTable
-        data={services}
+        data={services?.data || []}
         columns={columns}
         isLoading={isLoading}
-        pageSize={10}
+        pagination={pagination}
+        setPagination={setPagination}
+        rowCount={services?.pagination.total || 0}
       />
 
       <ServiceForm

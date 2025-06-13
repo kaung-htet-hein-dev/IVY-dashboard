@@ -6,11 +6,20 @@ export const useBranchService = () => {
   const { axiosInstance } = useAxios();
 
   return {
-    getBranches: async (): Promise<Branch[]> => {
+    getBranches: async (options: {
+      pageIndex: number;
+      pageSize: number;
+    }): Promise<BranchResponse> => {
       const response = await axiosInstance.get<BranchResponse>(
-        endpoints.branches
+        endpoints.branches,
+        {
+          params: {
+            offset: options.pageIndex * options.pageSize,
+            limit: options.pageSize
+          }
+        }
       );
-      return response.data.data;
+      return response.data;
     },
 
     getBranch: async (id: string): Promise<Branch> => {

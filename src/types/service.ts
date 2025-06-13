@@ -1,3 +1,4 @@
+import { Pagination } from "./api";
 import { Category } from "./category";
 
 export interface Service {
@@ -27,6 +28,7 @@ export interface ServicesResponse {
   code: number;
   data: Service[];
   message: string;
+  pagination: Pagination;
 }
 
 export type FormMode = "create" | "edit";

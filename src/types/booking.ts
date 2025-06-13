@@ -1,3 +1,4 @@
+import { Pagination } from "./api";
 import { Branch } from "./branch";
 import { Service } from "./service";
 
@@ -19,4 +20,5 @@ export interface BookingResponse {
   code: number;
   data: Booking[];
   message: string;
+  pagination: Pagination;
 }

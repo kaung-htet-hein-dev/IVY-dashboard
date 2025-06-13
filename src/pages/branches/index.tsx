@@ -17,7 +17,9 @@ export default function BranchesPage() {
     handleSubmit,
     deleteState,
     handleCancelDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    pagination,
+    setPagination
   } = useBranches();
 
   return (
@@ -34,10 +36,12 @@ export default function BranchesPage() {
       </Box>
 
       <DataTable
-        data={branches}
+        data={branches?.data || []}
         columns={columns}
         isLoading={isLoading}
-        pageSize={10}
+        pagination={pagination}
+        setPagination={setPagination}
+        rowCount={branches?.pagination.total || 0}
       />
 
       <BranchForm

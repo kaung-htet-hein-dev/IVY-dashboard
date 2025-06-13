@@ -1,5 +1,9 @@
 import { Booking } from "@/types/booking";
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
+import {
+  ColumnDef,
+  createColumnHelper,
+  PaginationState
+} from "@tanstack/react-table";
 import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
 import { useMemo, useState } from "react";
 import { format } from "date-fns";
@@ -21,11 +25,15 @@ export const useBookings = () => {
     mode: null,
     isLoading: false
   });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  });
 
-  const { data: bookings = [], isLoading: isTableLoading } = useQuery({
-    queryKey: ["bookings", filters],
+  const { data: bookings, isLoading: isTableLoading } = useQuery({
+    queryKey: ["bookings", filters, pagination],
     queryFn: () =>
-      bookingService.getBookings({
+      bookingService.getBookings(pagination, {
         status: filters.status || undefined,
         booked_date: filters.bookedDate
           ? format(filters.bookedDate, "dd/MM/yyyy")
@@ -174,6 +182,8 @@ export const useBookings = () => {
     handleCreate,
     handleCloseForm,
     handleSubmit,
-    handleUpdateBooking
+    handleUpdateBooking,
+    pagination,
+    setPagination
   };
 };

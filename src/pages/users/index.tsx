@@ -14,16 +14,20 @@ export default function UsersPage() {
     handleSubmit,
     deleteState,
     handleCancelDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    pagination,
+    setPagination
   } = useUsers();
 
   return (
     <PageContainer title="Users">
       <DataTable
-        data={users}
+        data={users?.data || []}
         columns={columns}
         isLoading={isLoading}
-        pageSize={10}
+        pagination={pagination}
+        setPagination={setPagination}
+        rowCount={users?.pagination?.total || 0}
       />
 
       <UserForm

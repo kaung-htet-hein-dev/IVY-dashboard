@@ -13,21 +13,26 @@ export const useBookingService = () => {
   const { axiosInstance } = useAxios();
 
   return {
-    getBookings: async (filters?: GetBookingsFilters): Promise<Booking[]> => {
-      const params = new URLSearchParams();
-      if (filters?.status) {
-        params.append("status", filters.status);
-      }
-      if (filters?.booked_date) {
-        params.append("booked_date", filters.booked_date);
-      }
-
+    getBookings: async (
+      options: {
+        pageIndex: number;
+        pageSize: number;
+      },
+      filters?: GetBookingsFilters
+    ): Promise<BookingResponse> => {
       const response = await axiosInstance.get<BookingResponse>(
-        `${endpoints.bookings}${
-          params.toString() ? `?${params.toString()}` : ""
-        }`
+        `${endpoints.bookings}`,
+        {
+          params: {
+            offset: options.pageIndex * options.pageSize,
+            limit: options.pageSize,
+            status: filters?.status,
+            booked_date: filters?.booked_date
+          }
+        }
       );
-      return response.data.data;
+
+      return response.data;
     },
 
     getBooking: async (id: string): Promise<Booking> => {

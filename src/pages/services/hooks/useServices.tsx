@@ -1,6 +1,11 @@
 import { useState } from "react";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { ColumnDef } from "@tanstack/react-table";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData
+} from "@tanstack/react-query";
+import { ColumnDef, PaginationState } from "@tanstack/react-table";
 import { Service, ServiceFormData } from "@/types/service";
 import { useNotification } from "@/hooks/useNotification";
 import { ServiceActions } from "../components/ServiceActions";
@@ -31,10 +36,15 @@ export const useServices = () => {
   const [deleteState, setDeleteState] = useState<DeleteState>({
     isOpen: false
   });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  });
 
-  const { data: services = [], isLoading: isTableLoading } = useQuery({
-    queryKey: ["services"],
-    queryFn: serviceService.getServices
+  const { data: services, isLoading: isTableLoading } = useQuery({
+    queryKey: ["services", pagination],
+    queryFn: () => serviceService.getServices(pagination),
+    placeholderData: keepPreviousData
   });
 
   const { mutate: createService, isPending: isCreating } = useMutation<
@@ -225,6 +235,8 @@ export const useServices = () => {
       isLoading: isDeleting
     },
     handleCancelDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    pagination,
+    setPagination
   };
 };

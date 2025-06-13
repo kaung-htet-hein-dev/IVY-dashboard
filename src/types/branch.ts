@@ -1,3 +1,5 @@
+import { Pagination } from "./api";
+
 export interface Branch {
   id: string;
   name: string;
@@ -13,4 +15,5 @@ export interface BranchResponse {
   code: number;
   data: Branch[];
   message: string;
+  pagination: Pagination;
 }

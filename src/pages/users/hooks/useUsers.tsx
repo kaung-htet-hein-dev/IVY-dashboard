@@ -1,6 +1,11 @@
 import { User } from "@/types/user";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { createColumnHelper } from "@tanstack/react-table";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData
+} from "@tanstack/react-query";
+import { createColumnHelper, PaginationState } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { useState } from "react";
 import { UserActions } from "../components/UserActions";
@@ -37,10 +42,15 @@ export const useUsers = () => {
     user: null,
     isLoading: false
   });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  });
 
-  const { data: users = [], isLoading } = useQuery({
-    queryKey: ["users"],
-    queryFn: userService.getUsers
+  const { data: users, isLoading } = useQuery({
+    queryKey: ["users", pagination],
+    queryFn: () => userService.getUsers(pagination),
+    placeholderData: keepPreviousData
   });
 
   const updateMutation = useMutation<
@@ -199,6 +209,8 @@ export const useUsers = () => {
     handleSubmit,
     deleteState,
     handleCancelDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    pagination,
+    setPagination
   };
 };

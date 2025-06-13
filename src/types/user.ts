@@ -1,3 +1,5 @@
+import { Pagination } from "./api";
+
 export interface User {
   id: string;
   first_name: string;
@@ -16,4 +18,5 @@ export interface UsersResponse {
   code: number;
   data: User[];
   message: string;
+  pagination: Pagination;
 }

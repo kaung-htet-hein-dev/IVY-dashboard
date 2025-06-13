@@ -19,7 +19,9 @@ export default function BookingsPage() {
     formState,
     handleCreate,
     handleCloseForm,
-    handleSubmit
+    handleSubmit,
+    pagination,
+    setPagination
   } = useBookings();
 
   return (
@@ -38,10 +40,12 @@ export default function BookingsPage() {
       <LocalizationProvider dateAdapter={AdapterDateFns}>
         <BookingFilters filters={filters} onFilterChange={onFilterChange} />
         <DataTable
-          data={bookings}
+          data={bookings?.data || []}
           columns={columns}
           isLoading={isLoading}
-          pageSize={10}
+          pagination={pagination}
+          setPagination={setPagination}
+          rowCount={bookings?.pagination?.total || 0}
         />
 
         <BookingForm

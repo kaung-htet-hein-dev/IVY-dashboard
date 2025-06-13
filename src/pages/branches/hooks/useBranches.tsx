@@ -1,6 +1,15 @@
 import { Branch } from "@/types/branch";
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  ColumnDef,
+  createColumnHelper,
+  PaginationState
+} from "@tanstack/react-table";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData
+} from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { BranchActions } from "../components/BranchActions";
@@ -33,10 +42,15 @@ export const useBranches = () => {
   const [deleteState, setDeleteState] = useState<DeleteState>({
     isOpen: false
   });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  });
 
-  const { data: branches = [], isLoading: isTableLoading } = useQuery({
-    queryKey: ["branches"],
-    queryFn: branchService.getBranches
+  const { data: branches, isLoading: isTableLoading } = useQuery({
+    queryKey: ["branches", pagination],
+    queryFn: () => branchService.getBranches(pagination),
+    placeholderData: keepPreviousData
   });
 
   const { mutate: createBranch, isPending: isCreating } = useMutation<
@@ -187,6 +201,8 @@ export const useBranches = () => {
       isLoading: isDeleting
     },
     handleCancelDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    pagination,
+    setPagination
   };
 };

@@ -6,9 +6,17 @@ export const useUserService = () => {
   const { axiosInstance } = useAxios();
 
   return {
-    getUsers: async (): Promise<User[]> => {
-      const response = await axiosInstance.get<UsersResponse>(endpoints.users);
-      return response.data.data;
+    getUsers: async (options: {
+      pageIndex: number;
+      pageSize: number;
+    }): Promise<UsersResponse> => {
+      const response = await axiosInstance.get<UsersResponse>(endpoints.users, {
+        params: {
+          offset: options.pageIndex * options.pageSize,
+          limit: options.pageSize
+        }
+      });
+      return response.data;
     },
 
     updateUser: async (

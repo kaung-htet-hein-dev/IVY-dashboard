@@ -14,3 +14,8 @@ export interface Pagination {
   has_next: boolean;
   has_prev: boolean;
 }
+
+export interface PaginationParams {
+  page: number;
+  limit: number;
+}
