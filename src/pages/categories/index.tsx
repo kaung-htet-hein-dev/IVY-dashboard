@@ -17,7 +17,9 @@ export default function CategoriesPage() {
     handleSubmit,
     deleteState,
     handleCancelDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    pagination,
+    setPagination
   } = useCategories();
 
   return (
@@ -34,10 +36,12 @@ export default function CategoriesPage() {
       </Box>
 
       <DataTable
-        data={categories}
+        data={categories?.data || []}
         columns={columns}
         isLoading={isLoading}
-        pageSize={10}
+        pagination={pagination}
+        setPagination={setPagination}
+        rowCount={categories?.pagination.total || 0}
       />
 
       <CategoryForm

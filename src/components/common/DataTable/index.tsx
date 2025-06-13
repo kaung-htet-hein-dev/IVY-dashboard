@@ -15,6 +15,7 @@ import {
   flexRender,
   getCoreRowModel,
   getPaginationRowModel,
+  PaginationState,
   useReactTable
 } from "@tanstack/react-table";
 
@@ -22,25 +23,28 @@ interface DataTableProps<TData> {
   data: TData[];
   columns: ColumnDef<TData, any>[];
   isLoading?: boolean;
-  pageSize?: number;
+  pagination: PaginationState;
+  setPagination: React.Dispatch<React.SetStateAction<PaginationState>>;
+  rowCount?: number;
 }
 
 export function DataTable<TData>({
   data,
   columns,
   isLoading = false,
-  pageSize = 10
+  pagination,
+  setPagination,
+  rowCount = 0
 }: DataTableProps<TData>) {
   const table = useReactTable({
     data,
     columns,
     getCoreRowModel: getCoreRowModel(),
     getPaginationRowModel: getPaginationRowModel(),
-    initialState: {
-      pagination: {
-        pageSize
-      }
-    }
+    onPaginationChange: setPagination,
+    rowCount,
+    state: { pagination },
+    manualPagination: true
   });
 
   return (

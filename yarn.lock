@@ -1140,6 +1140,25 @@ __metadata:
   languageName: node
   linkType: hard
 
+"@tanstack/query-devtools@npm:5.80.0":
+  version: 5.80.0
+  resolution: "@tanstack/query-devtools@npm:5.80.0"
+  checksum: 4531e3128ccb5e8843eff64c640df818e9a034850302eff58501d076eec47bcf91eddb3d962c9f166c722c8be234b3dca27f0ecf575b51d29e60d80ebc2ea30e
+  languageName: node
+  linkType: hard
+
+"@tanstack/react-query-devtools@npm:^5.80.7":
+  version: 5.80.7
+  resolution: "@tanstack/react-query-devtools@npm:5.80.7"
+  dependencies:
+    "@tanstack/query-devtools": 5.80.0
+  peerDependencies:
+    "@tanstack/react-query": ^5.80.7
+    react: ^18 || ^19
+  checksum: 3749e127162924e5ab3032c077c18533a26be26c11476689e6ed934a7dbab351474ddfd9394ee712fdfec8f0cac9f892babf4c8bb72f5368d37f3bea7397bd7c
+  languageName: node
+  linkType: hard
+
 "@tanstack/react-query@npm:^5.79.0":
   version: 5.79.0
   resolution: "@tanstack/react-query@npm:5.79.0"
@@ -3261,6 +3280,7 @@ __metadata:
     "@mui/x-data-grid": ^8.5.0
     "@mui/x-date-pickers": ^8.5.0
     "@tanstack/react-query": ^5.79.0
+    "@tanstack/react-query-devtools": ^5.80.7
     "@tanstack/react-table": ^8.21.3
     "@types/js-cookie": ^3.0.6
     "@types/node": ^20

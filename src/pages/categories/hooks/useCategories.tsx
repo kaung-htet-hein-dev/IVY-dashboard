@@ -1,6 +1,15 @@
 import { Category } from "@/types/category";
-import { ColumnDef, createColumnHelper } from "@tanstack/react-table";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import {
+  ColumnDef,
+  createColumnHelper,
+  PaginationState
+} from "@tanstack/react-table";
+import {
+  useQuery,
+  useMutation,
+  useQueryClient,
+  keepPreviousData
+} from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { CategoryActions } from "../components/CategoryActions";
@@ -30,10 +39,15 @@ export const useCategories = () => {
   const [deleteState, setDeleteState] = useState<DeleteState>({
     isOpen: false
   });
+  const [pagination, setPagination] = useState<PaginationState>({
+    pageIndex: 0,
+    pageSize: 10
+  });
 
-  const { data: categories = [], isLoading: isTableLoading } = useQuery({
-    queryKey: ["categories"],
-    queryFn: categoryService.getCategories
+  const { data: categories, isLoading: isTableLoading } = useQuery({
+    queryKey: ["categories", pagination],
+    queryFn: () => categoryService.getCategories(pagination),
+    placeholderData: keepPreviousData
   });
 
   const { mutate: createCategory, isPending: isCreating } = useMutation<
@@ -172,6 +186,8 @@ export const useCategories = () => {
       isLoading: isDeleting
     },
     handleCancelDelete,
-    handleConfirmDelete
+    handleConfirmDelete,
+    pagination,
+    setPagination
   };
 };

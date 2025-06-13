@@ -6,6 +6,7 @@ import { Inter } from "next/font/google";
 import { useRouter } from "next/router";
 import { SnackbarProvider } from "notistack";
 import { ClerkProvider } from "@clerk/nextjs";
+import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -56,6 +57,7 @@ export default function App({ Component, pageProps }: AppProps) {
               <Component {...pageProps} />
             )}
           </SnackbarProvider>
+          <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>
       </ThemeProvider>
     </ClerkProvider>

@@ -10,11 +10,20 @@ export const useCategoryService = () => {
   const { axiosInstance } = useAxios();
 
   return {
-    getCategories: async (): Promise<Category[]> => {
+    getCategories: async (options: {
+      pageIndex: number;
+      pageSize: number;
+    }): Promise<CategoryResponse> => {
       const response = await axiosInstance.get<CategoryResponse>(
-        endpoints.categories
+        endpoints.categories,
+        {
+          params: {
+            offset: options.pageIndex * options.pageSize,
+            limit: options.pageSize
+          }
+        }
       );
-      return response.data.data;
+      return response.data;
     },
 
     getCategory: async (id: string): Promise<Category> => {

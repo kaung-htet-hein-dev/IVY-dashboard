@@ -1,3 +1,5 @@
+import { Pagination } from "./api";
+
 export interface Category {
   id: string;
   name: string;
@@ -9,6 +11,7 @@ export interface CategoryResponse {
   code: number;
   data: Category[];
   message: string;
+  pagination: Pagination;
 }
 
 export interface SingleCategoryResponse {

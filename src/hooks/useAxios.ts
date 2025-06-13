@@ -1,9 +1,10 @@
 import { useAuth, useClerk } from "@clerk/nextjs";
 import { useCallback, useMemo } from "react";
 import { createAxiosInstance } from "../apiClient/axios";
+import { AxiosInstance } from "axios";
 
 // Singleton axios instance for memory efficiency
-let globalAxiosInstance: any = null;
+let globalAxiosInstance: AxiosInstance | null = null;
 
 const useAxios = () => {
   const { getToken } = useAuth();
