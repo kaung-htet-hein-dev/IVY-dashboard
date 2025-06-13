@@ -6,10 +6,12 @@ export const useServiceService = () => {
   const { axiosInstance } = useAxios();
 
   return {
-    getServices: async (options: {
-      pageIndex: number;
-      pageSize: number;
-    }): Promise<ServicesResponse> => {
+    getServices: async (
+      options: {
+        pageIndex: number;
+        pageSize: number;
+      } = { pageIndex: 0, pageSize: 10 }
+    ): Promise<ServicesResponse> => {
       const response = await axiosInstance.get<ServicesResponse>(
         endpoints.services,
         {

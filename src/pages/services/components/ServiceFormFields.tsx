@@ -38,14 +38,14 @@ export const ServiceFormFields = ({
 }: ServiceFormFieldsProps) => {
   const categoryService = useCategoryService();
   const branchService = useBranchService();
-  const { data: categories = [], isFetching: categoryFetching } = useQuery({
+  const { data: categories, isFetching: categoryFetching } = useQuery({
     queryKey: ["categories"],
-    queryFn: categoryService.getCategories
+    queryFn: () => categoryService.getCategories()
   });
 
-  const { data: branches = [], isFetching: branchFetching } = useQuery({
+  const { data: branches, isFetching: branchFetching } = useQuery({
     queryKey: ["branches"],
-    queryFn: branchService.getBranches
+    queryFn: () => branchService.getBranches()
   });
 
   const isLoading = categoryFetching || branchFetching;
@@ -120,7 +120,7 @@ export const ServiceFormFields = ({
           >
             <InputLabel>Category</InputLabel>
             <Select label="Category" {...field}>
-              {categories.map((category) => (
+              {categories?.data?.map((category) => (
                 <MenuItem key={category.id} value={category.id}>
                   {category.name}
                 </MenuItem>
@@ -145,7 +145,7 @@ export const ServiceFormFields = ({
             control={control}
             render={({ field }) => (
               <>
-                {branches.map((branch) => (
+                {branches?.data?.map((branch) => (
                   <FormControlLabel
                     key={branch.id}
                     control={

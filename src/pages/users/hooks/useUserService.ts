@@ -6,10 +6,12 @@ export const useUserService = () => {
   const { axiosInstance } = useAxios();
 
   return {
-    getUsers: async (options: {
-      pageIndex: number;
-      pageSize: number;
-    }): Promise<UsersResponse> => {
+    getUsers: async (
+      options: {
+        pageIndex: number;
+        pageSize: number;
+      } = { pageIndex: 0, pageSize: 10 }
+    ): Promise<UsersResponse> => {
       const response = await axiosInstance.get<UsersResponse>(endpoints.users, {
         params: {
           offset: options.pageIndex * options.pageSize,

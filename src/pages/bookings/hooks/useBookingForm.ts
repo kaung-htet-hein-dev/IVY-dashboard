@@ -34,9 +34,9 @@ export const useBookingForm = ({ open }: UseBookingFormProps) => {
     }
   });
 
-  const { data: services = [] } = useQuery({
+  const { data: services } = useQuery({
     queryKey: ["services"],
-    queryFn: serviceService.getServices
+    queryFn: () => serviceService.getServices()
   });
 
   const selectedDate = watch("booked_date");
@@ -53,7 +53,7 @@ export const useBookingForm = ({ open }: UseBookingFormProps) => {
   });
 
   const handleServiceChange = (serviceId: string) => {
-    const service = services.find((s) => s.id === serviceId);
+    const service = services?.data?.find((s) => s.id === serviceId);
     setSelectedService(service || null);
     setValue("service_id", serviceId);
     setValue("branch_id", ""); // Reset branch when service changes

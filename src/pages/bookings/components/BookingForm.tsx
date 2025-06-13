@@ -110,7 +110,7 @@ export const BookingForm = ({
               onChange={(e) => handleServiceChange(e.target.value as string)}
               disabled={isLoading}
             >
-              {services.map((service) => (
+              {services?.data?.map((service) => (
                 <MenuItem key={service.id} value={service.id}>
                   {service.name}
                 </MenuItem>

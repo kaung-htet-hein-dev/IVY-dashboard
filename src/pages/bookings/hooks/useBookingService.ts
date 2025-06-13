@@ -17,7 +17,7 @@ export const useBookingService = () => {
       options: {
         pageIndex: number;
         pageSize: number;
-      },
+      } = { pageIndex: 0, pageSize: 10 },
       filters?: GetBookingsFilters
     ): Promise<BookingResponse> => {
       const response = await axiosInstance.get<BookingResponse>(
