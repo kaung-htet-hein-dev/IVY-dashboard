@@ -13,6 +13,7 @@ import { useNotification } from "@/hooks/useNotification";
 import { ApiErrorResponse } from "@/types/api";
 import useUserService from "./useUserService";
 import { showErrorToastWithMessage } from "@/utils/error";
+import { getFormattedShowDateTime } from "@/utils/date";
 
 const columnHelper = createColumnHelper<User>();
 
@@ -182,11 +183,11 @@ export const useUsers = () => {
     }),
     columnHelper.accessor("created_at", {
       header: "Created At",
-      cell: (props) => format(new Date(props.getValue()), "PPpp")
+      cell: (props) => getFormattedShowDateTime(props.getValue())
     }),
     columnHelper.accessor("updated_at", {
       header: "Updated At",
-      cell: (props) => format(new Date(props.getValue()), "PPpp")
+      cell: (props) => getFormattedShowDateTime(props.getValue())
     }),
     columnHelper.accessor("id", {
       header: "Actions",

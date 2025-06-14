@@ -18,6 +18,7 @@ import { format } from "date-fns";
 import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
 import { useCategoryService } from "./useCategoryService";
+import { getFormattedShowDateTime } from "@/utils/date";
 
 interface FormState {
   mode: "create" | "edit" | null;
@@ -148,11 +149,11 @@ export const useCategories = () => {
       }),
       columnHelper.accessor("created_at", {
         header: "Created At",
-        cell: (props) => format(new Date(props.getValue()), "PPpp")
+        cell: (props) => getFormattedShowDateTime(props.getValue())
       }),
       columnHelper.accessor("updated_at", {
         header: "Updated At",
-        cell: (props) => format(new Date(props.getValue()), "PPpp")
+        cell: (props) => getFormattedShowDateTime(props.getValue())
       }),
       {
         id: "actions",
