@@ -22,9 +22,9 @@ export const createAxiosInstance = (
   axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
       const token = await getToken();
-      if (token) {
-        config.headers.Authorization = `Bearer ${token}`;
-      }
+      // if (token) {
+      //   config.headers.Authorization = `Bearer ${token}`;
+      // }
       return config;
     },
     (error: AxiosError) => {
