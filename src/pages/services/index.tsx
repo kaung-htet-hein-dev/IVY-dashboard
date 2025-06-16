@@ -5,6 +5,7 @@ import { Add } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
 import { ServiceForm } from "./components/ServiceForm";
 import { useServices } from "./hooks/useServices";
+import { UserViewModal } from "../bookings/components/UserViewModal";
 
 export default function ServicesPage() {
   const {
@@ -52,6 +53,8 @@ export default function ServicesPage() {
         mode={formState.mode || "create"}
         isLoading={formState.isLoading}
       />
+
+      {/* <UserViewModal /> */}
 
       <ConfirmationDialog
         open={deleteState.isOpen}
