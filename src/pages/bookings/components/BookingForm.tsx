@@ -14,7 +14,8 @@ import {
   FormLabel,
   RadioGroup,
   FormControlLabel,
-  Radio
+  Radio,
+  TextField
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
 import { BookingFormData } from "../types";
@@ -193,6 +194,19 @@ export const BookingForm = ({
               )}
             </FormControl>
           )}
+
+          <TextField
+            fullWidth
+            margin="normal"
+            label="Note (Optional)"
+            placeholder="Add any additional notes or special requests..."
+            multiline
+            rows={3}
+            {...register("note")}
+            error={Boolean(errors.note)}
+            helperText={errors.note?.message}
+            disabled={isLoading}
+          />
         </DialogContent>
 
         <DialogActions>

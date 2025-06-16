@@ -73,6 +73,9 @@ export const useBookings = () => {
       columnHelper.accessor("status", {
         header: "Status"
       }),
+      columnHelper.accessor("note", {
+        header: "Note"
+      }),
       columnHelper.accessor("created_at", {
         header: "Created At",
         cell: (props) => getFormattedShowDateTime(props.getValue())

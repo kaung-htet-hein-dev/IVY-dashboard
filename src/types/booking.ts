@@ -13,6 +13,7 @@ export interface Booking {
   created_at: string;
   updated_at: string;
   service: Service;
+  note: string;
   branch: Branch;
 }
 
