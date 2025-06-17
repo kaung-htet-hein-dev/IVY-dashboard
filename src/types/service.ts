@@ -1,4 +1,5 @@
 import { Pagination } from "./api";
+import { Branch } from "./branch";
 import { Category } from "./category";
 
 export interface Service {
@@ -13,14 +14,7 @@ export interface Service {
   is_active: boolean;
   created_at: string;
   updated_at: string;
-  branches: Array<{
-    id: string;
-    name: string;
-    location: string;
-    longitude: string;
-    latitude: string;
-    phone_number: string;
-  }>;
+  branches: Array<Branch>;
   branch_ids: string[];
 }
 

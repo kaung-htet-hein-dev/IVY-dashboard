@@ -45,7 +45,7 @@ export const ServiceFormFields = ({
 
   const { data: branches, isFetching: branchFetching } = useQuery({
     queryKey: ["branches"],
-    queryFn: () => branchService.getBranches({ is_active: true })
+    queryFn: () => branchService.getBranches({})
   });
 
   const isLoading = categoryFetching || branchFetching;

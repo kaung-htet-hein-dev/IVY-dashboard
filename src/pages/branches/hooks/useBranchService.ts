@@ -8,8 +8,7 @@ export const useBranchService = () => {
   return {
     getBranches: async ({
       pageIndex = 0,
-      pageSize = 10,
-      is_active
+      pageSize = 10
     }: {
       pageIndex?: number;
       pageSize?: number;
@@ -20,8 +19,7 @@ export const useBranchService = () => {
         {
           params: {
             offset: pageIndex * pageSize,
-            limit: pageSize,
-            is_active: !!is_active
+            limit: pageSize
           }
         }
       );

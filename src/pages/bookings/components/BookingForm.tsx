@@ -135,11 +135,14 @@ export const BookingForm = ({
                 {...register("branch_id")}
                 disabled={isLoading}
               >
-                {selectedService.branches?.map((branch) => (
-                  <MenuItem key={branch.id} value={branch.id}>
-                    {branch.name}
-                  </MenuItem>
-                ))}
+                {selectedService.branches?.map((branch) => {
+                  if (!branch.is_active) return null;
+                  return (
+                    <MenuItem key={branch.id} value={branch.id}>
+                      {branch.name}
+                    </MenuItem>
+                  );
+                })}
               </Select>
               {errors.branch_id && (
                 <FormHelperText>{errors.branch_id.message}</FormHelperText>
