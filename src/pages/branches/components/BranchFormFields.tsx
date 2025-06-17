@@ -1,17 +1,19 @@
-import { TextField, Stack } from "@mui/material";
-import { UseFormRegister, FieldErrors } from "react-hook-form";
+import { TextField, Stack, FormControlLabel, Switch } from "@mui/material";
+import { UseFormRegister, FieldErrors, Controller } from "react-hook-form";
 import { BranchFormData } from "../types";
 
 interface BranchFormFieldsProps {
   register: UseFormRegister<BranchFormData>;
   errors: FieldErrors<BranchFormData>;
   disabled?: boolean;
+  control?: any;
 }
 
 export const BranchFormFields = ({
   register,
   errors,
-  disabled = false
+  disabled = false,
+  control
 }: BranchFormFieldsProps) => {
   return (
     <Stack spacing={2}>
@@ -55,6 +57,18 @@ export const BranchFormFields = ({
         helperText={errors.phone_number?.message}
         fullWidth
         disabled={disabled}
+      />
+      <Controller
+        name="is_active"
+        control={control}
+        render={({ field: { value, ...field } }) => (
+          <FormControlLabel
+            control={
+              <Switch checked={Boolean(value)} {...field} disabled={disabled} />
+            }
+            label="Active"
+          />
+        )}
       />
     </Stack>
   );

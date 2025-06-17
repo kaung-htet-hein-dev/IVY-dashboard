@@ -14,7 +14,8 @@ export const useBranchForm = ({ initialData, open }: UseBranchFormProps) => {
     register,
     handleSubmit,
     formState: { errors },
-    reset
+    reset,
+    control
   } = useForm<BranchFormData>({
     resolver: zodResolver(branchSchema),
     defaultValues: {
@@ -22,7 +23,8 @@ export const useBranchForm = ({ initialData, open }: UseBranchFormProps) => {
       location: "",
       longitude: "",
       latitude: "",
-      phone_number: ""
+      phone_number: "",
+      is_active: true
     }
   });
 
@@ -34,7 +36,8 @@ export const useBranchForm = ({ initialData, open }: UseBranchFormProps) => {
           location: "",
           longitude: "",
           latitude: "",
-          phone_number: ""
+          phone_number: "",
+          is_active: true
         }
       );
     }
@@ -44,6 +47,7 @@ export const useBranchForm = ({ initialData, open }: UseBranchFormProps) => {
     register,
     handleSubmit,
     errors,
-    reset
+    reset,
+    control
   };
 };

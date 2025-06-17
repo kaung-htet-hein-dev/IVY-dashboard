@@ -13,7 +13,6 @@ import {
 import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
 import { BranchActions } from "../components/BranchActions";
-import { format } from "date-fns";
 import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
 import { BranchFormData } from "../types";
@@ -161,6 +160,9 @@ export const useBranches = () => {
       }),
       columnHelper.accessor("phone_number", {
         header: "Phone Number"
+      }),
+      columnHelper.accessor("is_active", {
+        header: "Is Active"
       }),
       columnHelper.accessor("created_at", {
         header: "Created At",

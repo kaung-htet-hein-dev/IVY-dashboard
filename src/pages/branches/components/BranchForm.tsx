@@ -30,7 +30,7 @@ export const BranchForm = ({
   mode,
   isLoading = false
 }: BranchFormProps) => {
-  const { register, handleSubmit, errors, reset } = useBranchForm({
+  const { register, handleSubmit, errors, reset, control } = useBranchForm({
     initialData,
     open
   });
@@ -82,6 +82,7 @@ export const BranchForm = ({
             register={register}
             errors={errors}
             disabled={isLoading}
+            control={control}
           />
         </DialogContent>
         <DialogActions>
