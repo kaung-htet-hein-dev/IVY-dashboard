@@ -16,7 +16,7 @@ import { getFormattedShowDateTime } from "@/utils/date";
 interface UserViewModalProps {
   open: boolean;
   onClose: () => void;
-  user: User | null;
+  user?: User | null;
   isLoading: boolean;
 }
 

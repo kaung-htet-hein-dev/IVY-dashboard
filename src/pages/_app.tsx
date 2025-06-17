@@ -7,6 +7,8 @@ import { useRouter } from "next/router";
 import { SnackbarProvider } from "notistack";
 import { ClerkProvider } from "@clerk/nextjs";
 import { ReactQueryDevtools } from "@tanstack/react-query-devtools";
+import { LocalizationProvider } from "@mui/x-date-pickers";
+import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -49,13 +51,15 @@ export default function App({ Component, pageProps }: AppProps) {
             }}
             autoHideDuration={3000}
           >
-            {!showDrawer ? (
-              <Layout>
+            <LocalizationProvider dateAdapter={AdapterDateFns}>
+              {!showDrawer ? (
+                <Layout>
+                  <Component {...pageProps} />
+                </Layout>
+              ) : (
                 <Component {...pageProps} />
-              </Layout>
-            ) : (
-              <Component {...pageProps} />
-            )}
+              )}
+            </LocalizationProvider>
           </SnackbarProvider>
           <ReactQueryDevtools initialIsOpen={false} />
         </QueryClientProvider>

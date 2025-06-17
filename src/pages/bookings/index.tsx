@@ -1,13 +1,12 @@
-import { PageContainer } from "@/components/common/PageContainer";
 import { DataTable } from "@/components/common/DataTable";
-import { useBookings } from "./hooks/useBookings";
-import { Box, Button } from "@mui/material";
+import { PageContainer } from "@/components/common/PageContainer";
 import { Add } from "@mui/icons-material";
-import { LocalizationProvider } from "@mui/x-date-pickers";
-import { AdapterDateFns } from "@mui/x-date-pickers/AdapterDateFns";
+import { Box, Button } from "@mui/material";
 import { BookingFilters } from "./components/BookingFilters";
 import { BookingForm } from "./components/BookingForm";
 import { UpdateBookingForm } from "./components/UpdateBookingForm";
+import { useBookings } from "./hooks/useBookings";
+import { UserViewModal } from "./components/UserViewModal";
 
 export default function BookingsPage() {
   const {
@@ -21,7 +20,11 @@ export default function BookingsPage() {
     handleCloseForm,
     handleSubmit,
     pagination,
-    setPagination
+    setPagination,
+    isUserLoading,
+    user,
+    userModalOpen,
+    handleUserClose
   } = useBookings();
 
   return (
@@ -37,32 +40,37 @@ export default function BookingsPage() {
         </Button>
       </Box>
 
-      <LocalizationProvider dateAdapter={AdapterDateFns}>
-        <BookingFilters filters={filters} onFilterChange={onFilterChange} />
-        <DataTable
-          data={bookings?.data || []}
-          columns={columns}
-          isLoading={isLoading}
-          pagination={pagination}
-          setPagination={setPagination}
-          rowCount={bookings?.pagination?.total || 0}
-        />
+      <BookingFilters filters={filters} onFilterChange={onFilterChange} />
+      <DataTable
+        data={bookings?.data || []}
+        columns={columns}
+        isLoading={isLoading}
+        pagination={pagination}
+        setPagination={setPagination}
+        rowCount={bookings?.pagination?.total || 0}
+      />
 
-        <BookingForm
-          open={formState.mode === "create"}
-          onClose={handleCloseForm}
-          onSubmit={handleSubmit}
-          isLoading={formState.isLoading}
-        />
+      <BookingForm
+        open={formState.mode === "create"}
+        onClose={handleCloseForm}
+        onSubmit={handleSubmit}
+        isLoading={formState.isLoading}
+      />
 
-        <UpdateBookingForm
-          open={formState.mode === "edit"}
-          onClose={handleCloseForm}
-          onSubmit={handleSubmit}
-          booking={formState.booking}
-          isLoading={formState.isLoading}
-        />
-      </LocalizationProvider>
+      <UserViewModal
+        open={userModalOpen}
+        onClose={handleUserClose}
+        user={user}
+        isLoading={isUserLoading}
+      />
+
+      <UpdateBookingForm
+        open={formState.mode === "edit"}
+        onClose={handleCloseForm}
+        onSubmit={handleSubmit}
+        booking={formState.booking}
+        isLoading={formState.isLoading}
+      />
     </PageContainer>
   );
 }

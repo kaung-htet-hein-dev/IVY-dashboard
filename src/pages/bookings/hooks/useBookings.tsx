@@ -1,23 +1,25 @@
+import { ApiErrorResponse } from "@/types/api";
 import { Booking } from "@/types/booking";
+import { getFormattedShowDateTime } from "@/utils/date";
+import { showErrorToastWithMessage } from "@/utils/error";
+import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import {
   ColumnDef,
   createColumnHelper,
   PaginationState
 } from "@tanstack/react-table";
-import { useQueryClient, useMutation, useQuery } from "@tanstack/react-query";
-import { useMemo, useState } from "react";
 import { format } from "date-fns";
-import { BookingActions } from "../components/BookingActions";
-import { BookingFormData, FormState } from "../types";
 import { enqueueSnackbar } from "notistack";
+import { useMemo, useState } from "react";
+import { BookingActions } from "../components/BookingActions";
 import { UpdateBookingFormData } from "../components/UpdateBookingForm";
-import { ApiErrorResponse } from "@/types/api";
-import { showErrorToastWithMessage } from "@/utils/error";
+import { BookingFormData, FormState } from "../types";
 import useBookingService from "./useBookingService";
-import { getFormattedShowDateTime } from "@/utils/date";
+import useUserService from "./useUserService";
 
 export const useBookings = () => {
   const bookingService = useBookingService();
+  const userService = useUserService();
   const [filters, setFilters] = useState({
     status: "",
     bookedDate: null as Date | null
@@ -29,6 +31,22 @@ export const useBookings = () => {
   const [pagination, setPagination] = useState<PaginationState>({
     pageIndex: 0,
     pageSize: 10
+  });
+  const [userInfo, setUserInfo] = useState<{
+    open: boolean;
+    userID: string | null;
+  }>({
+    userID: null,
+    open: false
+  });
+
+  const { data: user, isLoading: isUserLoading } = useQuery({
+    queryKey: ["userInfo", userInfo.userID],
+    queryFn: () => {
+      if (!userInfo.userID) return Promise.resolve(null);
+      return userService.getUser(userInfo.userID);
+    },
+    enabled: !!userInfo.userID
   });
 
   const { data: bookings, isLoading: isTableLoading } = useQuery({
@@ -44,6 +62,7 @@ export const useBookings = () => {
 
   const handleView = (booking: Booking) => {
     console.log("View booking:", booking);
+    setUserInfo({ open: true, userID: booking.user_id });
   };
 
   const handleEdit = (booking: Booking) => {
@@ -173,6 +192,10 @@ export const useBookings = () => {
     }
   };
 
+  const handleUserClose = () => {
+    setUserInfo({ open: false, userID: null });
+  };
+
   return {
     bookings,
     isLoading: isTableLoading,
@@ -188,6 +211,10 @@ export const useBookings = () => {
     handleSubmit,
     handleUpdateBooking,
     pagination,
-    setPagination
+    setPagination,
+    user,
+    isUserLoading,
+    userModalOpen: userInfo.open,
+    handleUserClose
   };
 };
