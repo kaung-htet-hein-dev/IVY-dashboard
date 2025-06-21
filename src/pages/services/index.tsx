@@ -3,9 +3,8 @@ import { DataTable } from "@/components/common/DataTable";
 import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { Add } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { ServiceForm } from "./components/ServiceForm";
 import { useServices } from "../../hooks/service/useServices";
-import { UserViewModal } from "../../components/booking/UserViewModal";
+import { ServiceForm } from "@/components/service/ServiceForm";
 
 export default function ServicesPage() {
   const {
