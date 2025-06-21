@@ -3,8 +3,8 @@ import { DataTable } from "@/components/common/DataTable";
 import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { Add } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { BranchForm } from "./components/BranchForm";
-import { useBranches } from "./hooks/useBranches";
+import { BranchForm } from "../../components/branch/BranchForm";
+import { useBranches } from "../../hooks/branch/useBranches";
 
 export default function BranchesPage() {
   const {

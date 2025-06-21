@@ -1,8 +1,8 @@
 import { endpoints } from "@/apiClient/endpoints";
-import useAxios from "@/hooks/useAxios";
 import { Booking, BookingResponse } from "@/types/booking";
 import { format } from "date-fns";
-import { BookingFormData, TimeSlot } from "../types";
+import { BookingFormData, TimeSlot } from "../../components/booking/types";
+import useAxios from "../utility/useAxios";
 
 interface GetBookingsFilters {
   status?: string;

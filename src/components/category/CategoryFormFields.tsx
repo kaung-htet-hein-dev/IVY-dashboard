@@ -1,6 +1,6 @@
 import { TextField, Stack } from "@mui/material";
 import { UseFormRegister, FieldErrors } from "react-hook-form";
-import { CategoryFormData } from "../types";
+import { CategoryFormData } from "./types";
 
 interface CategoryFormFieldsProps {
   register: UseFormRegister<CategoryFormData>;

@@ -1,10 +1,10 @@
 import { endpoints } from "@/apiClient/endpoints";
-import useAxios from "@/hooks/useAxios";
 import {
   Category,
   CategoryResponse,
   SingleCategoryResponse
 } from "@/types/category";
+import useAxios from "../utility/useAxios";
 
 export const useCategoryService = () => {
   const { axiosInstance } = useAxios();

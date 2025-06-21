@@ -11,9 +11,9 @@ import {
 import { format } from "date-fns";
 import { enqueueSnackbar } from "notistack";
 import { useMemo, useState } from "react";
-import { BookingActions } from "../components/BookingActions";
-import { UpdateBookingFormData } from "../components/UpdateBookingForm";
-import { BookingFormData, FormState } from "../types";
+import { BookingActions } from "../../components/booking/BookingActions";
+import { UpdateBookingFormData } from "../../components/booking/UpdateBookingForm";
+import { BookingFormData, FormState } from "../../components/booking/types";
 import useBookingService from "./useBookingService";
 import useUserService from "./useUserService";
 

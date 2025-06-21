@@ -1,7 +1,7 @@
 import { PageContainer } from "@/components/common/PageContainer";
 import { DataTable } from "@/components/common/DataTable";
-import { useUsers } from "./hooks/useUsers";
-import { UserForm } from "./components/UserForm";
+import { useUsers } from "../../hooks/user/useUsers";
+import { UserForm } from "../../components/user/UserForm";
 import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 
 export default function UsersPage() {

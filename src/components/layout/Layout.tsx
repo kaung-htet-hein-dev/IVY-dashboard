@@ -9,8 +9,8 @@ import { useState, ReactNode, useEffect } from "react";
 import { useAuth } from "@clerk/nextjs";
 import { Header } from "./Header";
 import { Drawer } from "./Drawer";
-import { useCurrentUser } from "@/hooks/useCurrentUser";
 import { UnauthorizedAccessWarning } from "@/components/auth/UnauthorizedAccessWarning";
+import { useCurrentUser } from "@/hooks/utility/useCurrentUser";
 
 const Main = styled("main", { shouldForwardProp: (prop) => prop !== "open" })<{
   open?: boolean;

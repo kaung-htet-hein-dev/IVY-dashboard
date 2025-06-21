@@ -19,9 +19,9 @@ import {
   FieldErrors,
   UseFormRegister
 } from "react-hook-form";
-import { ServiceFormData } from "../types";
-import useCategoryService from "@/pages/categories/hooks/useCategoryService";
-import useBranchService from "@/pages/branches/hooks/useBranchService";
+import useCategoryService from "@/hooks/category/useCategoryService";
+import useBranchService from "@/hooks/branch/useBranchService";
+import { ServiceFormData } from "./types";
 
 interface ServiceFormFieldsProps {
   register: UseFormRegister<ServiceFormData>;

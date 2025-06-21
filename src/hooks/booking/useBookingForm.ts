@@ -2,10 +2,14 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { useEffect, useState } from "react";
 import { useQuery } from "@tanstack/react-query";
-import { BookingFormData, TimeSlot, bookingFormSchema } from "../types";
+import {
+  BookingFormData,
+  TimeSlot,
+  bookingFormSchema
+} from "../../components/booking/types";
 import { Service } from "@/types/service";
 import { format, addDays } from "date-fns";
-import useServiceService from "@/pages/services/hooks/useServiceService";
+import useServiceService from "@/hooks/service/useServiceService";
 import useBookingService from "./useBookingService";
 
 interface UseBookingFormProps {

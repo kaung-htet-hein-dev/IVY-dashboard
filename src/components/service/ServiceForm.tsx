@@ -1,5 +1,4 @@
 import { Service, ServiceFormData } from "@/types/service";
-import { FormMode } from "../types";
 import { Close } from "@mui/icons-material";
 import {
   Button,
@@ -12,9 +11,9 @@ import {
 } from "@mui/material";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
-import { serviceSchema } from "../types";
 import { ServiceFormFields } from "./ServiceFormFields";
 import { useEffect } from "react";
+import { FormMode, serviceSchema } from "./types";
 
 interface ServiceFormProps {
   open: boolean;

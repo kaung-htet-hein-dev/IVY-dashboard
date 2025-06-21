@@ -1,6 +1,6 @@
 import { TextField, Stack, FormControlLabel, Switch } from "@mui/material";
 import { UseFormRegister, FieldErrors, Controller } from "react-hook-form";
-import { BranchFormData } from "../types";
+import { BranchFormData } from "./types";
 
 interface BranchFormFieldsProps {
   register: UseFormRegister<BranchFormData>;

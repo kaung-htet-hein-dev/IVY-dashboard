@@ -2,11 +2,11 @@ import { DataTable } from "@/components/common/DataTable";
 import { PageContainer } from "@/components/common/PageContainer";
 import { Add } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { BookingFilters } from "./components/BookingFilters";
-import { BookingForm } from "./components/BookingForm";
-import { UpdateBookingForm } from "./components/UpdateBookingForm";
-import { useBookings } from "./hooks/useBookings";
-import { UserViewModal } from "./components/UserViewModal";
+import { BookingFilters } from "../../components/booking/BookingFilters";
+import { BookingForm } from "../../components/booking/BookingForm";
+import { UpdateBookingForm } from "../../components/booking/UpdateBookingForm";
+import { useBookings } from "../../hooks/booking/useBookings";
+import { UserViewModal } from "../../components/booking/UserViewModal";
 
 export default function BookingsPage() {
   const {

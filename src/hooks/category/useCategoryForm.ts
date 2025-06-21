@@ -2,7 +2,10 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Category } from "@/types/category";
 import { useEffect } from "react";
-import { CategoryFormData, categorySchema } from "../types";
+import {
+  CategoryFormData,
+  categorySchema
+} from "../../components/category/types";
 
 interface UseCategoryFormProps {
   initialData?: Category;

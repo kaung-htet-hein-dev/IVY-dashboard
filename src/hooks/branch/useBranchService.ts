@@ -1,6 +1,6 @@
 import { endpoints } from "@/apiClient/endpoints";
-import useAxios from "@/hooks/useAxios";
 import { Branch, BranchResponse } from "@/types/branch";
+import useAxios from "../utility/useAxios";
 
 export const useBranchService = () => {
   const { axiosInstance } = useAxios();

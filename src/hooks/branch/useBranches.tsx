@@ -1,4 +1,4 @@
-import { Category } from "@/types/category";
+import { Branch } from "@/types/branch";
 import {
   ColumnDef,
   createColumnHelper,
@@ -12,28 +12,30 @@ import {
 } from "@tanstack/react-query";
 import { useSnackbar } from "notistack";
 import React, { useMemo, useState } from "react";
-import { CategoryActions } from "../components/CategoryActions";
-import { CategoryFormData } from "../types";
-import { format } from "date-fns";
+import { BranchActions } from "../../components/branch/BranchActions";
 import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
-import { useCategoryService } from "./useCategoryService";
+import { BranchFormData } from "../../components/branch/types";
 import { getFormattedShowDateTime } from "@/utils/date";
+import useBranchService from "./useBranchService";
+
+type FormMode = "create" | "edit" | null;
 
 interface FormState {
-  mode: "create" | "edit" | null;
-  category?: Category;
+  mode: FormMode;
+  branch?: Branch;
 }
 
 interface DeleteState {
   isOpen: boolean;
-  category?: Category;
+  branch?: Branch;
 }
 
-export const useCategories = () => {
+export const useBranches = () => {
+  const branchService = useBranchService();
+
   const { enqueueSnackbar } = useSnackbar();
   const queryClient = useQueryClient();
-  const categoryService = useCategoryService();
   const [formState, setFormState] = useState<FormState>({
     mode: null
   });
@@ -45,21 +47,21 @@ export const useCategories = () => {
     pageSize: 10
   });
 
-  const { data: categories, isLoading: isTableLoading } = useQuery({
-    queryKey: ["categories", pagination],
-    queryFn: () => categoryService.getCategories(pagination),
+  const { data: branches, isLoading: isTableLoading } = useQuery({
+    queryKey: ["branches", pagination],
+    queryFn: () => branchService.getBranches(pagination),
     placeholderData: keepPreviousData
   });
 
-  const { mutate: createCategory, isPending: isCreating } = useMutation<
-    Category,
+  const { mutate: createBranch, isPending: isCreating } = useMutation<
+    Branch,
     ApiErrorResponse,
-    CategoryFormData
+    Omit<Branch, "id">
   >({
-    mutationFn: categoryService.createCategory,
+    mutationFn: branchService.createBranch,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
-      enqueueSnackbar("Category created successfully", { variant: "success" });
+      queryClient.invalidateQueries({ queryKey: ["branches"] });
+      enqueueSnackbar("Branch created successfully", { variant: "success" });
       handleCloseForm();
     },
     onError: (error) => {
@@ -67,15 +69,15 @@ export const useCategories = () => {
     }
   });
 
-  const { mutate: updateCategory, isPending: isUpdating } = useMutation<
-    Category,
+  const { mutate: updateBranch, isPending: isUpdating } = useMutation<
+    Branch,
     ApiErrorResponse,
-    { id: string; data: CategoryFormData }
+    { id: string; data: BranchFormData }
   >({
-    mutationFn: ({ id, data }) => categoryService.updateCategory(id, data),
+    mutationFn: ({ id, data }) => branchService.updateBranch(id, data),
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
-      enqueueSnackbar("Category updated successfully", { variant: "success" });
+      queryClient.invalidateQueries({ queryKey: ["branches"] });
+      enqueueSnackbar("Branch updated successfully", { variant: "success" });
       handleCloseForm();
     },
     onError: (error) => {
@@ -83,15 +85,15 @@ export const useCategories = () => {
     }
   });
 
-  const { mutate: deleteCategory, isPending: isDeleting } = useMutation<
+  const { mutate: deleteBranch, isPending: isDeleting } = useMutation<
     void,
     ApiErrorResponse,
     string
   >({
-    mutationFn: categoryService.deleteCategory,
+    mutationFn: branchService.deleteBranch,
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["categories"] });
-      enqueueSnackbar("Category deleted successfully", { variant: "success" });
+      queryClient.invalidateQueries({ queryKey: ["branches"] });
+      enqueueSnackbar("Branch deleted successfully", { variant: "success" });
       handleCancelDelete();
     },
     onError: (error) => {
@@ -99,13 +101,13 @@ export const useCategories = () => {
     }
   });
 
-  const handleView = (category: Category) => {
+  const handleView = (branch: Branch) => {
     // TODO: Implement view functionality
-    console.log("View category:", category);
+    console.log("View branch:", branch);
   };
 
-  const handleEdit = (category: Category) => {
-    setFormState({ mode: "edit", category });
+  const handleEdit = (branch: Branch) => {
+    setFormState({ mode: "edit", branch });
   };
 
   const handleCreate = () => {
@@ -116,8 +118,8 @@ export const useCategories = () => {
     setFormState({ mode: null });
   };
 
-  const handleDeleteClick = (category: Category) => {
-    setDeleteState({ isOpen: true, category });
+  const handleDeleteClick = (branch: Branch) => {
+    setDeleteState({ isOpen: true, branch });
   };
 
   const handleCancelDelete = () => {
@@ -125,27 +127,42 @@ export const useCategories = () => {
   };
 
   const handleConfirmDelete = async () => {
-    if (!deleteState.category) return;
-    await deleteCategory(deleteState.category.id);
+    if (!deleteState.branch) return;
+    await deleteBranch(deleteState.branch.id);
   };
 
-  const handleSubmit = async (data: CategoryFormData) => {
+  const handleSubmit = async (data: BranchFormData | Omit<Branch, "id">) => {
     if (formState.mode === "create") {
-      await createCategory(data);
-    } else if (formState.mode === "edit" && formState.category) {
-      await updateCategory({
-        id: formState.category.id,
+      await createBranch(data as Omit<Branch, "id">);
+    } else if (formState.mode === "edit" && formState.branch) {
+      await updateBranch({
+        id: formState.branch.id,
         data
       });
     }
   };
 
-  const columnHelper = createColumnHelper<Category>();
+  const columnHelper = createColumnHelper<Branch>();
 
-  const columns = useMemo<ColumnDef<Category, any>[]>(
+  const columns = useMemo<ColumnDef<Branch, any>[]>(
     () => [
       columnHelper.accessor("name", {
         header: "Name"
+      }),
+      columnHelper.accessor("location", {
+        header: "Location"
+      }),
+      columnHelper.accessor("longitude", {
+        header: "Longitude"
+      }),
+      columnHelper.accessor("latitude", {
+        header: "Latitude"
+      }),
+      columnHelper.accessor("phone_number", {
+        header: "Phone Number"
+      }),
+      columnHelper.accessor("is_active", {
+        header: "Is Active"
       }),
       columnHelper.accessor("created_at", {
         header: "Created At",
@@ -159,8 +176,8 @@ export const useCategories = () => {
         id: "actions",
         header: "Actions",
         cell: ({ row }) => (
-          <CategoryActions
-            category={row.original}
+          <BranchActions
+            branch={row.original}
             onView={() => handleView(row.original)}
             onEdit={() => handleEdit(row.original)}
             onDelete={() => handleDeleteClick(row.original)}
@@ -172,7 +189,7 @@ export const useCategories = () => {
   );
 
   return {
-    categories,
+    branches,
     isLoading: isTableLoading,
     columns,
     handleCreate,

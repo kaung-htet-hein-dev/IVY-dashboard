@@ -7,12 +7,12 @@ import {
 } from "@tanstack/react-query";
 import { ColumnDef, PaginationState } from "@tanstack/react-table";
 import { Service, ServiceFormData } from "@/types/service";
-import { useNotification } from "@/hooks/useNotification";
-import { ServiceActions } from "../components/ServiceActions";
 import { format } from "date-fns";
 import { ApiErrorResponse } from "@/types/api";
 import { showErrorToastWithMessage } from "@/utils/error";
 import useServiceService from "./useServiceService";
+import { ServiceActions } from "@/components/service/ServiceActions";
+import { useNotification } from "../utility/useNotification";
 
 interface FormState {
   mode: "create" | "edit" | null;

@@ -1,6 +1,6 @@
 import { endpoints } from "@/apiClient/endpoints";
-import useAxios from "@/hooks/useAxios";
 import { User } from "@/types/user";
+import useAxios from "../utility/useAxios";
 
 export const useUserService = () => {
   const { axiosInstance } = useAxios();

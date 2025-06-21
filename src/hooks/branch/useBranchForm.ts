@@ -2,7 +2,7 @@ import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Branch } from "@/types/branch";
 import { useEffect } from "react";
-import { BranchFormData, branchSchema } from "../types";
+import { BranchFormData, branchSchema } from "../../components/branch/types";
 
 interface UseBranchFormProps {
   initialData?: Branch;

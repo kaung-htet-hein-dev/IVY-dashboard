@@ -8,12 +8,12 @@ import {
 import { createColumnHelper, PaginationState } from "@tanstack/react-table";
 import { format } from "date-fns";
 import { useState } from "react";
-import { UserActions } from "../components/UserActions";
-import { useNotification } from "@/hooks/useNotification";
+import { UserActions } from "../../components/user/UserActions";
 import { ApiErrorResponse } from "@/types/api";
 import useUserService from "./useUserService";
 import { showErrorToastWithMessage } from "@/utils/error";
 import { getFormattedShowDateTime } from "@/utils/date";
+import { useNotification } from "../utility/useNotification";
 
 const columnHelper = createColumnHelper<User>();
 

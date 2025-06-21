@@ -18,10 +18,10 @@ import {
   TextField
 } from "@mui/material";
 import { Close } from "@mui/icons-material";
-import { BookingFormData } from "../types";
-import { useBookingForm } from "../hooks/useBookingForm";
+import { BookingFormData } from "./types";
+import { useBookingForm } from "../../hooks/booking/useBookingForm";
 import { DatePicker } from "@mui/x-date-pickers";
-import { useNotification } from "@/hooks/useNotification";
+import { useNotification } from "@/hooks/utility/useNotification";
 
 interface BookingFormProps {
   open: boolean;

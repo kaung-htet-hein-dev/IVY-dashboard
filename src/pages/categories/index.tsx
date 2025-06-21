@@ -3,8 +3,8 @@ import { DataTable } from "@/components/common/DataTable";
 import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { Add } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
-import { CategoryForm } from "./components/CategoryForm";
-import { useCategories } from "./hooks/useCategories";
+import { useCategories } from "../../hooks/category/useCategories";
+import { CategoryForm } from "@/components/category/CategoryForm";
 
 export default function CategoriesPage() {
   const {

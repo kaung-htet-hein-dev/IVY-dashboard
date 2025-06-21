@@ -4,8 +4,8 @@ import { ConfirmationDialog } from "@/components/common/ConfirmationDialog";
 import { Add } from "@mui/icons-material";
 import { Box, Button } from "@mui/material";
 import { ServiceForm } from "./components/ServiceForm";
-import { useServices } from "./hooks/useServices";
-import { UserViewModal } from "../bookings/components/UserViewModal";
+import { useServices } from "../../hooks/service/useServices";
+import { UserViewModal } from "../../components/booking/UserViewModal";
 
 export default function ServicesPage() {
   const {
