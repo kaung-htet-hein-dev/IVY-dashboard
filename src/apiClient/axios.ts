@@ -21,9 +21,10 @@ export const createAxiosInstance = (
 
   axiosInstance.interceptors.request.use(
     async (config: InternalAxiosRequestConfig) => {
-      // if (token) {
-      //   config.headers.Authorization = `Bearer ${token}`;
-      // }
+      const token = await getToken();
+      if (token) {
+        config.headers.Authorization = `Bearer ${token}`;
+      }
       return config;
     },
     (error: AxiosError) => {
@@ -35,7 +36,7 @@ export const createAxiosInstance = (
     (response) => response,
     (error: ApiErrorResponse) => {
       if (error.response?.status === 401) {
-        onAuthError();
+        // onAuthError();
       }
       return Promise.reject(error);
     }
