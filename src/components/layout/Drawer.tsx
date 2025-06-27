@@ -4,7 +4,7 @@ import {
   Category,
   ChevronLeft,
   ChevronRight,
-  MiscellaneousServices,
+  EventSeat,
   People
 } from "@mui/icons-material";
 import {
@@ -77,7 +77,7 @@ const menuItems = [
   { text: "Branches", icon: <Business />, path: "/branches" },
   { text: "Categories", icon: <Category />, path: "/categories" },
   { text: "Bookings", icon: <BookOnline />, path: "/bookings" },
-  { text: "Services", icon: <MiscellaneousServices />, path: "/services" }
+  { text: "Services", icon: <EventSeat />, path: "/services" }
 ];
 
 interface DrawerProps {
